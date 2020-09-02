@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Nanno">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Nanno">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="">
+    <meta name="description" content="性能优化部分1.减少HTTP请求 图片地图 CSS sprites 字体图标 合并脚本和样式表  2.使用CDN CDN（内容发布网络）是一组分布在多个不同地理位置的Web服务器，用于更加有效地向用户发布内容。在优化性能时，向特定用户发布内容的服务器的选择基于对网络慕课拥堵的测量。例如，CDN可能选择网络阶跃数最小的服务器，或者具有最短响应时间的服务器。 CDN还可以进行数据备份、扩展存储能力，进">
+<meta property="og:type" content="article">
+<meta property="og:title" content="web前端面试题(二)">
+<meta property="og:url" content="https://nanno12.github.io/2020/06/08/2020-06-08-%E9%9D%A2%E8%AF%95%E9%A2%98%E7%BB%BC%E5%90%88(%E4%BA%8C)/index.html">
+<meta property="og:site_name" content="Nanno">
+<meta property="og:description" content="性能优化部分1.减少HTTP请求 图片地图 CSS sprites 字体图标 合并脚本和样式表  2.使用CDN CDN（内容发布网络）是一组分布在多个不同地理位置的Web服务器，用于更加有效地向用户发布内容。在优化性能时，向特定用户发布内容的服务器的选择基于对网络慕课拥堵的测量。例如，CDN可能选择网络阶跃数最小的服务器，或者具有最短响应时间的服务器。 CDN还可以进行数据备份、扩展存储能力，进">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://nanno12.github.io/2020/06/08/2020-06-08-%E9%9D%A2%E8%AF%95%E9%A2%98%E7%BB%BC%E5%90%88(%E4%BA%8C)/git-reset.png">
+<meta property="article:published_time" content="2020-06-08T03:33:00.000Z">
+<meta property="article:modified_time" content="2020-09-02T06:12:35.893Z">
+<meta property="article:author" content="Nanno">
+<meta property="article:tag" content="面试">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://nanno12.github.io/2020/06/08/2020-06-08-%E9%9D%A2%E8%AF%95%E9%A2%98%E7%BB%BC%E5%90%88(%E4%BA%8C)/git-reset.png">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    
+    <title>web前端面试题(二) · NANNO</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+<meta name="generator" content="Hexo 5.1.1"></head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >NANNO</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">web前端面试题(二)</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>NANNO</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            web前端面试题(二)
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "面试">面试</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count word-count">10.8k</span>Reading time: <span class="post-count reading-time">39 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/06/08</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="性能优化部分"><a href="#性能优化部分" class="headerlink" title="性能优化部分"></a>性能优化部分</h2><h3 id="1-减少HTTP请求"><a href="#1-减少HTTP请求" class="headerlink" title="1.减少HTTP请求"></a>1.减少HTTP请求</h3><ul>
+<li>图片地图</li>
+<li>CSS sprites</li>
+<li>字体图标</li>
+<li>合并脚本和样式表</li>
+</ul>
+<h3 id="2-使用CDN"><a href="#2-使用CDN" class="headerlink" title="2.使用CDN"></a>2.使用CDN</h3><ul>
+<li>CDN（内容发布网络）是一组分布在多个不同地理位置的Web服务器，用于更加有效地向用户发布内容。在优化性能时，向特定用户发布内容的服务器的选择基于对网络慕课拥堵的测量。例如，CDN可能选择网络阶跃数最小的服务器，或者具有最短响应时间的服务器。</li>
+<li>CDN还可以进行数据备份、扩展存储能力，进行缓存，同时有助于缓和Web流量峰值压力。</li>
+<li>CDN的缺点：</li>
+</ul>
+<ol>
+<li>响应时间可能会受到其他网站流量的影响。CDN服务提供商在其所有客户之间共享Web服务器组。</li>
+<li>如果CDN服务质量下降了，那么你的工作质量也将下降</li>
+<li>无法直接控制组件服务器</li>
+</ol>
+<h3 id="3-为文件头指定Expires或Cache-Control，使内容具有缓存性。"><a href="#3-为文件头指定Expires或Cache-Control，使内容具有缓存性。" class="headerlink" title="3.为文件头指定Expires或Cache-Control，使内容具有缓存性。"></a>3.为文件头指定Expires或Cache-Control，使内容具有缓存性。</h3><ul>
+<li>区分静态内容和动态内容，避免以后页面访问中不必要的HTTP请求。</li>
+</ul>
+<h3 id="4-避免空的src和href"><a href="#4-避免空的src和href" class="headerlink" title="4. 避免空的src和href"></a>4. 避免空的src和href</h3><ul>
+<li>留意具有这两个属性的标签如link，script，img，iframe等；</li>
+</ul>
+<h3 id="5-使用gzip压缩内容"><a href="#5-使用gzip压缩内容" class="headerlink" title="5. 使用gzip压缩内容"></a>5. 使用gzip压缩内容</h3><h3 id="6-把CSS放到顶部"><a href="#6-把CSS放到顶部" class="headerlink" title="6. 把CSS放到顶部"></a>6. 把CSS放到顶部</h3><ul>
+<li>将样式表放在文档底部会阻止浏览器中的内容逐步出现。为了避免当样式变化时重绘页面元素，浏览器会阻塞内容逐步呈现，造成“白屏”。</li>
+</ul>
+<h3 id="7-把JS放到底部"><a href="#7-把JS放到底部" class="headerlink" title="7. 把JS放到底部"></a>7. 把JS放到底部</h3><ul>
+<li>js的下载和执行会阻塞Dom树的构建（严谨地说是中断了Dom树的更新），所以script标签放在首屏范围内的HTML代码段里会截断首屏的内容。</li>
+</ul>
+<h3 id="8-避免使用CSS表达式"><a href="#8-避免使用CSS表达式" class="headerlink" title="8. 避免使用CSS表达式"></a>8. 避免使用CSS表达式</h3><h3 id="9-将CSS和JS放到外部文件中"><a href="#9-将CSS和JS放到外部文件中" class="headerlink" title="9. 将CSS和JS放到外部文件中"></a>9. 将CSS和JS放到外部文件中</h3><h3 id="10-减少DNS查找"><a href="#10-减少DNS查找" class="headerlink" title="10.减少DNS查找"></a>10.减少DNS查找</h3><h3 id="11-精简CSS和JS"><a href="#11-精简CSS和JS" class="headerlink" title="11.精简CSS和JS"></a>11.精简CSS和JS</h3><ul>
+<li>目的就是减少下载的文件体积，可考虑压缩工具JSMin和YUICompressor。</li>
+</ul>
+<h3 id="12-避免跳转"><a href="#12-避免跳转" class="headerlink" title="12.避免跳转"></a>12.避免跳转</h3><h3 id="13-剔除重复的JS和CSS"><a href="#13-剔除重复的JS和CSS" class="headerlink" title="13.剔除重复的JS和CSS"></a>13.剔除重复的JS和CSS</h3><ol>
+<li>形成良好的脚本组织。重复脚本有可能出现在不同的脚本包含同一段脚本的情况，有些是必要的，但有些却不是必要的，所以需要对脚本进行一个良好的组织。</li>
+<li>实现脚本管理器模块。</li>
+</ol>
+<h3 id="14-配置ETags"><a href="#14-配置ETags" class="headerlink" title="14.配置ETags"></a>14.配置ETags</h3><p>ETag主要是为了解决Last-Modified无法解决的一些问题：</p>
+<ol>
+<li>一些文件也许会周期性的更改，但是他的内容并不改变(仅仅改变的修改时间)，这个时候我们并不希望客户端认为这个文件被修改了，而重新GET;</li>
+<li>某些文件修改非常频繁，比如在秒以下的时间内进行修改，(比方说1s内修改了N次)，If-Modified-Since能检查到的粒度是s级的，这种修改无法判断(或者说UNIX记录MTIME只能精确到秒);</li>
+<li>某些服务器不能精确的得到文件的最后修改时间。</li>
+</ol>
+<h3 id="15-使AJAX可缓存，使用GET来完成AJAX请求"><a href="#15-使AJAX可缓存，使用GET来完成AJAX请求" class="headerlink" title="15.使AJAX可缓存，使用GET来完成AJAX请求"></a>15.使AJAX可缓存，使用GET来完成AJAX请求</h3><ul>
+<li>Ajax的一个明显的优点就是向用户提供了即时反馈，因为它异步的从后端web服务器请求信息。</li>
+<li>用户是否需要等待的关键因素在于Ajax请求是被动的还是主动的。被动请求是为了将来来使用而预先发起的，主动请求是基于用户当前的操作而发起的</li>
+<li><strong>什么样的AJAX请求可以被缓存？</strong></li>
+</ul>
+<ol>
+<li>POST的请求，是不可以在客户端缓存的，每次请求都需要发送给服务器进行处理，每次都会返回状态码200。（可以在服务器端对数据进行缓存，以便提高处理速度）</li>
+<li>GET的请求，是可以（而且默认）在客户端进行缓存的，除非指定了不同的地址，否则同一个地址的AJAX请求，不会重复在服务器执行，而是返回304。</li>
+<li>在进行Ajax请求的时候，可以选择尽量使用get方法，这样可以使用客户端的缓存，提高请求速度。</li>
+</ol>
+<h3 id="16-延迟加载，预加载"><a href="#16-延迟加载，预加载" class="headerlink" title="16.延迟加载，预加载"></a>16.延迟加载，预加载</h3><h3 id="17-减少DOM元素个数"><a href="#17-减少DOM元素个数" class="headerlink" title="17.减少DOM元素个数"></a>17.减少DOM元素个数</h3><h3 id="18-尽量减少iframe的个数"><a href="#18-尽量减少iframe的个数" class="headerlink" title="18.尽量减少iframe的个数"></a>18.尽量减少iframe的个数</h3><h3 id="19-减少Cookie的大小"><a href="#19-减少Cookie的大小" class="headerlink" title="19.减少Cookie的大小"></a>19.减少Cookie的大小</h3><h3 id="20-用代替-import"><a href="#20-用代替-import" class="headerlink" title="20.用代替@import"></a>20.用<link>代替@import</h3><h2 id="webpack相关面试题"><a href="#webpack相关面试题" class="headerlink" title="webpack相关面试题"></a>webpack相关面试题</h2><p>参考：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/bb1e76edc71e">webpack面试题汇总</a></p>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000014148611">前端面试之webpack面试常见问题</a></p>
+<h3 id="1-什么是webpack"><a href="#1-什么是webpack" class="headerlink" title="1. 什么是webpack"></a>1. 什么是webpack</h3><p>webpack是一个打包模块化javascript的工具，在webpack里一切文件皆模块，通过loader转换文件，通过plugin注入钩子，最后输出由多个模块组合成的文件，webpack专注构建模块化项目。<br>WebPack可以看做是模块打包机：它做的事情是，分析你的项目结构，找到JavaScript模块以及其它的一些浏览器不能直接运行的拓展语言（Scss，TypeScript等），并将其打包为合适的格式以供浏览器使用。</p>
+<h3 id="2-webpack与grunt、gulp的不同？"><a href="#2-webpack与grunt、gulp的不同？" class="headerlink" title="2. webpack与grunt、gulp的不同？"></a>2. webpack与grunt、gulp的不同？</h3><ul>
+<li><strong>Grunt、Gulp是基于任务运行的工具：</strong> 它们会自动执行指定的任务，就像流水线，把资源放上去然后通过不同插件进行加工，它们包含活跃的社区，丰富的插件，能方便的打造各种工作流。</li>
+<li><strong>Webpack是基于模块化打包的工具:</strong> 自动化处理模块,webpack把一切当成模块，当 webpack 处理应用程序时，它会递归地构建一个依赖关系图(dependency graph)，其中包含应用程序需要的每个模块，然后将所有这些模块打包成一个或多个 bundle。</li>
+<li>因此这是完全不同的两类工具,而现在主流的方式是用npm script代替Grunt、Gulp,npm script同样可以打造任务流。</li>
+</ul>
+<h3 id="3-什么是bundle-什么是chunk，什么是module"><a href="#3-什么是bundle-什么是chunk，什么是module" class="headerlink" title="3.什么是bundle,什么是chunk，什么是module?"></a>3.什么是bundle,什么是chunk，什么是module?</h3><ul>
+<li>bundle：是由webpack打包出来的文件</li>
+<li>chunk：代码块，一个chunk由多个模块组合而成，用于代码的合并和分割</li>
+<li>module：是开发中的单个模块，在webpack的世界，一切皆模块，一个模块对应一个文件，webpack会从配置的entry中递归开始找出所有依赖的模块</li>
+</ul>
+<h3 id="4-什么是Loader-什么是Plugin"><a href="#4-什么是Loader-什么是Plugin" class="headerlink" title="4.什么是Loader?什么是Plugin?"></a>4.什么是Loader?什么是Plugin?</h3><p>1）Loaders是用来告诉webpack如何转化处理某一类型的文件，并且引入到打包出的文件中<br>2）Plugin是用来自定义webpack打包过程的方式，一个插件是含有apply方法的一个对象，通过这个方法可以参与到整个webpack打包的各个流程(生命周期)。</p>
+<h3 id="5-有哪些常见的Loader？他们是解决什么问题的？"><a href="#5-有哪些常见的Loader？他们是解决什么问题的？" class="headerlink" title="5. 有哪些常见的Loader？他们是解决什么问题的？"></a>5. 有哪些常见的Loader？他们是解决什么问题的？</h3><ul>
+<li>file-loader：把文件输出到一个文件夹中，在代码中通过相对 URL 去引用输出的文件</li>
+<li>url-loader：和 file-loader 类似，但是能在文件很小的情况下以 base64 的方式把文件内容注入到代码中去</li>
+<li>source-map-loader：加载额外的 Source Map 文件，以方便断点调试</li>
+<li>image-loader：加载并且压缩图片文件</li>
+<li>babel-loader：把 ES6 转换成 ES5</li>
+<li>css-loader：加载 CSS，支持模块化、压缩、文件导入等特性</li>
+<li>style-loader：把 CSS 代码注入到 JavaScript 中，通过 DOM 操作去加载 CSS。</li>
+<li>eslint-loader：通过 ESLint 检查 JavaScript 代码</li>
+</ul>
+<h3 id="6-有哪些常见的Plugin？"><a href="#6-有哪些常见的Plugin？" class="headerlink" title="6. 有哪些常见的Plugin？"></a>6. 有哪些常见的Plugin？</h3><ul>
+<li>define-plugin：定义环境变量</li>
+<li>html-webpack-plugin：简化html文件创建</li>
+<li>uglifyjs-webpack-plugin：通过UglifyES压缩ES6代码</li>
+<li>webpack-parallel-uglify-plugin: 多核压缩,提高压缩速度</li>
+<li>webpack-bundle-analyzer: 可视化webpack输出文件的体积</li>
+<li>mini-css-extract-plugin: CSS提取到单独的文件中,支持按需加载</li>
+</ul>
+<h3 id="7-Loader和Plugin的不同？"><a href="#7-Loader和Plugin的不同？" class="headerlink" title="7. Loader和Plugin的不同？"></a>7. Loader和Plugin的不同？</h3><ul>
+<li>Loader直译为”加载器”。Webpack将一切文件视为模块，但是webpack原生是只能解析js文件，如果想将其他文件也打包的话，就会用到loader。 所以Loader的作用是让webpack拥有了加载和解析_非JavaScript文件_的能力。</li>
+<li>Plugin直译为”插件”。Plugin可以扩展webpack的功能，让webpack具有更多的灵活性。 在 Webpack 运行的生命周期中会广播出许多事件，Plugin 可以监听这些事件，在合适的时机通过 Webpack 提供的 API 改变输出结果。</li>
+<li>Loader在module.rules中配置，也就是说他作为模块的解析规则而存在。 类型为数组，每一项都是一个Object，里面描述了对于什么类型的文件（test），使用什么加载(loader)和使用的参数（options）</li>
+<li>Plugin在plugins中单独配置。 类型为数组，每一项是一个plugin的实例，参数都通过构造函数传入。</li>
+</ul>
+<h3 id="8-配置问题-如何可以自动生成webpack配置？"><a href="#8-配置问题-如何可以自动生成webpack配置？" class="headerlink" title="8. 配置问题:如何可以自动生成webpack配置？"></a>8. 配置问题:如何可以自动生成webpack配置？</h3><p>webpack-cli /vue-cli /etc …脚手架工具</p>
+<h3 id="9-webpack-dev-server和http服务器如nginx有什么区别"><a href="#9-webpack-dev-server和http服务器如nginx有什么区别" class="headerlink" title="9. webpack-dev-server和http服务器如nginx有什么区别?"></a>9. webpack-dev-server和http服务器如nginx有什么区别?</h3><p>webpack-dev-server使用内存来存储webpack开发环境下的打包文件，并且可以使用模块热更新，他比传统的http服务对开发更加简单高效。</p>
+<h3 id="10-什么是模块热更新？"><a href="#10-什么是模块热更新？" class="headerlink" title="10. 什么是模块热更新？"></a>10. 什么是模块热更新？</h3><p>模块热更新是webpack的一个功能，他可以使得代码修改过后不用刷新浏览器就可以更新，是高级版的自动刷新浏览器。</p>
+<h3 id="11-什么是长缓存？在webpack中如何做到长缓存优化？"><a href="#11-什么是长缓存？在webpack中如何做到长缓存优化？" class="headerlink" title="11. 什么是长缓存？在webpack中如何做到长缓存优化？"></a>11. 什么是长缓存？在webpack中如何做到长缓存优化？</h3><p>浏览器在用户访问页面的时候，为了加快加载速度，会对用户访问的静态资源进行存储，但是每一次代码升级或是更新，都需要浏览器去下载新的代码，最方便和简单的更新方式就是引入新的文件名称。在webpack中可以在output纵输出的文件指定chunkhash,并且分离经常更新的代码和框架代码。通过NameModulesPlugin或是HashedModuleIdsPlugin使再次打包文件名不变。</p>
+<h3 id="12-webpack的构建流程是什么-从读取配置到输出文件这个过程尽量说全"><a href="#12-webpack的构建流程是什么-从读取配置到输出文件这个过程尽量说全" class="headerlink" title="12.webpack的构建流程是什么?从读取配置到输出文件这个过程尽量说全"></a>12.webpack的构建流程是什么?从读取配置到输出文件这个过程尽量说全</h3><p>Webpack 的运行流程是一个串行的过程，从启动到结束会依次执行以下流程：</p>
+<ul>
+<li>初始化参数：从配置文件和 Shell 语句中读取与合并参数，得出最终的参数；</li>
+<li>开始编译：用上一步得到的参数初始化 Compiler 对象，加载所有配置的插件，执行对象的 run 方法开始执行编译；</li>
+<li>确定入口：根据配置中的 entry 找出所有的入口文件；</li>
+<li>编译模块：从入口文件出发，调用所有配置的 Loader 对模块进行翻译，再找出该模块依赖的模块，再递归本步骤直到所有入口依赖的文件都经过了本步骤的处理；</li>
+<li>完成模块编译：在经过第4步使用 Loader 翻译完所有模块后，得到了每个模块被翻译后的最终内容以及它们之间的依赖关系；</li>
+<li>输出资源：根据入口和模块之间的依赖关系，组装成一个个包含多个模块的 Chunk，再把每个 Chunk 转换成一个单独的文件加入到输出列表，这步是可以修改输出内容的最后机会；</li>
+<li>输出完成：在确定好输出内容后，根据配置确定输出的路径和文件名，把文件内容写入到文件系统。</li>
+</ul>
+<h3 id="13-是否写过Loader和Plugin？描述一下编写loader或plugin的思路？"><a href="#13-是否写过Loader和Plugin？描述一下编写loader或plugin的思路？" class="headerlink" title="13. 是否写过Loader和Plugin？描述一下编写loader或plugin的思路？"></a>13. 是否写过Loader和Plugin？描述一下编写loader或plugin的思路？</h3><ul>
+<li>Loader像一个”翻译官”把读到的源文件内容转义成新的文件内容，并且每个Loader通过链式操作，将源文件一步步翻译成想要的样子。</li>
+<li>编写Loader时要遵循单一原则，每个Loader只做一种”转义”工作。 每个Loader的拿到的是源文件内容（source），可以通过返回值的方式将处理后的内容输出，也可以调用this.callback()方法，将内容返回给webpack。 还可以通过 this.async()生成一个callback函数，再用这个callback将处理后的内容输出出去。 此外webpack还为开发者准备了开发loader的工具函数集——loader-utils。</li>
+<li>相对于Loader而言，Plugin的编写就灵活了许多。webpack在运行的生命周期中会广播出许多事件，Plugin 可以监听这些事件，在合适的时机通过 Webpack 提供的 API 改变输出结果。</li>
+</ul>
+<h3 id="14-如何利用webpack来优化前端性能？"><a href="#14-如何利用webpack来优化前端性能？" class="headerlink" title="14.如何利用webpack来优化前端性能？"></a>14.如何利用webpack来优化前端性能？</h3><ul>
+<li>压缩代码。删除多余的代码、注释、简化代码的写法等等方式。可以利用webpack的UglifyJsPlugin和ParallelUglifyPlugin来压缩JS文件， 利用cssnano（css-loader?minimize）来压缩css</li>
+<li>利用CDN加速。在构建过程中，将引用的静态资源路径修改为CDN上对应的路径。可以利用webpack对于output参数和各loader的publicPath参数来修改资源路径</li>
+<li>删除死代码（Tree Shaking）。将代码中永远不会走到的片段删除掉。可以通过在启动webpack时追加参数–optimize-minimize来实现</li>
+<li>提取公共代码。</li>
+</ul>
+<h3 id="15-webpack、rollup、parcel优劣？"><a href="#15-webpack、rollup、parcel优劣？" class="headerlink" title="15. webpack、rollup、parcel优劣？"></a>15. webpack、rollup、parcel优劣？</h3><ul>
+<li>webpack适用于大型复杂的前端站点构建: webpack有强大的loader和插件生态,打包后的文件实际上就是一个立即执行函数，这个立即执行函数接收一个参数，这个参数是模块对象，键为各个模块的路径，值为模块内容。立即执行函数内部则处理模块之间的引用，执行模块等,这种情况更适合文件依赖复杂的应用开发.</li>
+<li>rollup适用于基础库的打包，如vue、d3等: Rollup 就是将各个模块打包进一个文件中，并且通过 Tree-shaking 来删除无用的代码,可以最大程度上降低代码体积,但是rollup没有webpack如此多的的如代码分割、按需加载等高级功能，其更聚焦于库的打包，因此更适合库的开发.</li>
+<li>parcel适用于简单的实验性项目: 他可以满足低门槛的快速看到效果,但是生态差、报错信息不够全面都是他的硬伤，除了一些玩具项目或者实验项目不建议使用</li>
+</ul>
+<h3 id="16-如何提高webpack的打包速度"><a href="#16-如何提高webpack的打包速度" class="headerlink" title="16. 如何提高webpack的打包速度?"></a>16. 如何提高webpack的打包速度?</h3><ul>
+<li>happypack: 利用进程并行编译loader,利用缓存来使得 rebuild 更快,遗憾的是作者表示已经不会继续开发此项目,类似的替代者是thread-loader</li>
+<li>外部扩展(externals): 将不怎么需要更新的第三方库脱离webpack打包，不被打入bundle中，从而减少打包时间,比如jQuery用script标签引入。</li>
+<li>dll: 采用webpack的 DllPlugin 和 DllReferencePlugin 引入dll，让一些基本不会改动的代码先打包成静态资源,避免反复编译浪费时间</li>
+<li>利用缓存: webpack.cache、babel-loader.cacheDirectory、HappyPack.cache都可以利用缓存提高rebuild效率</li>
+<li>缩小文件搜索范围: 比如babel-loader插件,如果你的文件仅存在于src中,那么可以include: path.resolve(__dirname, ‘src’),当然绝大多数情况下这种操作的提升有限,除非不小心build了node_modules文件</li>
+</ul>
+<h3 id="17-如何提高webpack的构建速度？"><a href="#17-如何提高webpack的构建速度？" class="headerlink" title="17. 如何提高webpack的构建速度？"></a>17. 如何提高webpack的构建速度？</h3><ol>
+<li>多入口情况下，使用CommonsChunkPlugin来提取公共代码</li>
+<li>通过externals配置来提取常用库</li>
+<li>利用DllPlugin和DllReferencePlugin预编译资源模块 通过DllPlugin来对那些我们引用但是绝对不会修改的npm包来进行预编译，再通过4. DllReferencePlugin将预编译的模块加载进来。</li>
+<li>使用Happypack 实现多线程加速编译</li>
+<li>使用webpack-uglify-parallel来提升uglifyPlugin的压缩速度。 原理上webpack-uglify-parallel采用了多核并行压缩来提升压缩速度</li>
+<li>使用Tree-shaking和Scope Hoisting来剔除多余代码</li>
+</ol>
+<h3 id="18-AMD和CMD的区别？"><a href="#18-AMD和CMD的区别？" class="headerlink" title="18. AMD和CMD的区别？"></a>18. AMD和CMD的区别？</h3><ul>
+<li>最明显的区别就是在模块定义时对依赖的处理不同</li>
+<li>AMD推崇依赖前置，在定义模块的时候就要声明其依赖的模块</li>
+<li>CMD推崇就近依赖，只有在用到某个模块的时候再去require</li>
+</ul>
+<p>参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/futai/p/5258349.html">前端模块化，AMD与CMD的区别</a></p>
+<h3 id="19-介绍模块化发展历程"><a href="#19-介绍模块化发展历程" class="headerlink" title="19. 介绍模块化发展历程"></a>19. 介绍模块化发展历程</h3><ul>
+<li>模块化主要是用来抽离公共代码，隔离作用域，避免变量冲突等。</li>
+</ul>
+<ol>
+<li>IIFE： 使用自执行函数来编写模块化，特点：在一个单独的函数作用域中执行代码，避免变量冲突。</li>
+<li>AMD： 使用requireJS 来编写模块化，特点：依赖必须提前声明好。</li>
+<li>CMD： 使用seaJS 来编写模块化，特点：支持动态引入依赖文件。</li>
+<li>CommonJS： nodejs 中自带的模块化。</li>
+<li>UMD：兼容AMD，CommonJS 模块化语法。</li>
+<li>webpack(require.ensure)：webpack 2.x 版本中的代码分割。</li>
+<li>ES Modules： ES6 引入的模块化，支持import 来引入另一个 js 。</li>
+</ol>
+<h2 id="浏览器相关知识点"><a href="#浏览器相关知识点" class="headerlink" title="浏览器相关知识点"></a>浏览器相关知识点</h2><p>相关参考：<a href="inputUrl.rst">输入URL发生了什么？</a></p>
+<h3 id="1-实现一个postMessage跨域"><a href="#1-实现一个postMessage跨域" class="headerlink" title="1.实现一个postMessage跨域"></a>1.实现一个postMessage跨域</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 发送消息端</span></span><br><span class="line"><span class="built_in">window</span>.parent.postMessage(<span class="string">&#x27;message&#x27;</span>, <span class="string">&#x27;http://test.com&#x27;</span>)</span><br><span class="line"><span class="comment">// 接收消息端</span></span><br><span class="line"><span class="keyword">var</span> mc = <span class="keyword">new</span> MessageChannel()</span><br><span class="line">mc.addEventListener(<span class="string">&#x27;message&#x27;</span>, <span class="function"><span class="params">event</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">var</span> origin = event.origin || event.originalEvent.origin</span><br><span class="line">  <span class="keyword">if</span> (origin === <span class="string">&#x27;http://test.com&#x27;</span>) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;验证通过&#x27;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-cookie，localStorage，sessionStorage，indexDB的区别"><a href="#2-cookie，localStorage，sessionStorage，indexDB的区别" class="headerlink" title="2. cookie，localStorage，sessionStorage，indexDB的区别"></a>2. cookie，localStorage，sessionStorage，indexDB的区别</h3><ul>
+<li>cookie数据始终在同源的http请求中携带（即使不需要），即cookie在浏览器和服务器间来回传递。而sessionStorage和localStorage不会自动把数据发给服务器，仅在本地保存。</li>
+<li>存储大小限制不同，cookie数据不能超过4k，同时因为每次http请求都会携带cookie，所以cookie只适合保存很小的数据，如会话标识。sessionStorage和localStorage虽然也有存储大小的限制，但比cookie大得多，可以达到5M或更大。</li>
+<li>数据有效期不同，sessionStorage：仅在当前浏览器窗口关闭前有效，自然也就不可能持久保持；localStorage：始终有效，窗口或浏览器关闭也一直保存，因此用作持久数据；cookie只在设置的cookie过期时间之前一直有效，即使窗口或浏览器关闭。</li>
+<li>作用域不同，sessionStorage不在不同的浏览器窗口中共享，即使是同一个页面；localStorage 在所有同源窗口中都是共享的；cookie也是在所有同源窗口中都是共享的。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>cookie</th>
+<th>localStorage</th>
+<th>sessionStorage</th>
+<th>indexDB</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据生命周期</td>
+<td>一般由服务器生成，可以设置过期时间</td>
+<td>除非被清理，否则一直存在</td>
+<td>页面关闭就清理</td>
+<td>除非被清理，否则一直存在</td>
+</tr>
+<tr>
+<td>数据存储大小</td>
+<td>4k</td>
+<td>5M</td>
+<td>5M</td>
+<td>无限</td>
+</tr>
+<tr>
+<td>与服务端通信</td>
+<td>header中，对于请求性能影响</td>
+<td>不参与</td>
+<td>不参与</td>
+<td>不参与</td>
+</tr>
+</tbody></table>
+<h3 id="3-cookie某些属性的作用？"><a href="#3-cookie某些属性的作用？" class="headerlink" title="3. cookie某些属性的作用？"></a>3. cookie某些属性的作用？</h3><table>
+<thead>
+<tr>
+<th>属性</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>value</td>
+<td>如果用于保存用户登录态，应该将该值加密，不能使用明文的用户标识</td>
+</tr>
+<tr>
+<td>http-only</td>
+<td>不能通过JS访问Cookie，减少XSS攻击</td>
+</tr>
+<tr>
+<td>secure</td>
+<td>只能在协议为HTTPS的请求中携带</td>
+</tr>
+<tr>
+<td>same-site</td>
+<td>规定浏览器不能在跨域请求中携带Cookie，减少CSRF攻击</td>
+</tr>
+</tbody></table>
+<h3 id="4-Service-Worker"><a href="#4-Service-Worker" class="headerlink" title="4.Service Worker"></a>4.Service Worker</h3><ul>
+<li>Service Worker 是运行在浏览器背后的独立线程，一般可以用来实现缓存功能。使用 Service Worker的话，传输协议必须为 HTTPS。因为 Service Worker 中涉及到请求拦截，所以必须使用 HTTPS 协议来保障安全。</li>
+<li>Service Worker 实现缓存功能一般分为三个步骤：首先需要先注册 Service Worker，然后监听到 install 事件以后就可以缓存需要的文件，那么在下次用户访问的时候就可以通过拦截请求的方式查询是否存在缓存，存在缓存的话就可以直接读取缓存文件，否则就去请求数据。<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// index.js</span></span><br><span class="line"><span class="keyword">if</span> (navigator.serviceWorker) &#123;</span><br><span class="line">  navigator.serviceWorker</span><br><span class="line">    .register(<span class="string">&#x27;sw.js&#x27;</span>)</span><br><span class="line">    .then(<span class="function"><span class="keyword">function</span>(<span class="params">registration</span>) </span>&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">&#x27;service worker 注册成功&#x27;</span>)</span><br><span class="line">    &#125;)</span><br><span class="line">    .catch(<span class="function"><span class="keyword">function</span>(<span class="params">err</span>) </span>&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">&#x27;servcie worker 注册失败&#x27;</span>)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// sw.js</span></span><br><span class="line"><span class="comment">// 监听 `install` 事件，回调中缓存所需文件</span></span><br><span class="line">self.addEventListener(<span class="string">&#x27;install&#x27;</span>, <span class="function"><span class="params">e</span> =&gt;</span> &#123;</span><br><span class="line">  e.waitUntil(</span><br><span class="line">    caches.open(<span class="string">&#x27;my-cache&#x27;</span>).then(<span class="function"><span class="keyword">function</span>(<span class="params">cache</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> cache.addAll([<span class="string">&#x27;./index.html&#x27;</span>, <span class="string">&#x27;./index.js&#x27;</span>])</span><br><span class="line">    &#125;)</span><br><span class="line">  )</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">// 拦截所有请求事件</span></span><br><span class="line"><span class="comment">// 如果缓存中已经有请求的数据就直接用缓存，否则去请求数据</span></span><br><span class="line">self.addEventListener(<span class="string">&#x27;fetch&#x27;</span>, <span class="function"><span class="params">e</span> =&gt;</span> &#123;</span><br><span class="line">  e.respondWith(</span><br><span class="line">    caches.match(e.request).then(<span class="function"><span class="keyword">function</span>(<span class="params">response</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (response) &#123;</span><br><span class="line">        <span class="keyword">return</span> response</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">&#x27;fetch source&#x27;</span>)</span><br><span class="line">    &#125;)</span><br><span class="line">  )</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="5-强缓存和协商缓存"><a href="#5-强缓存和协商缓存" class="headerlink" title="5. 强缓存和协商缓存"></a>5. 强缓存和协商缓存</h3><ul>
+<li><strong>强缓存</strong> 可以通过设置两种 HTTP Header 实现：Expires 和 Cache-Control 。强缓存表示在缓存期间不需要请求，state code 为 200。</li>
+</ul>
+<ol>
+<li>Expires 是 HTTP/1 的产物，表示资源会在 Wed, 22 Oct 2018 08:41:00 GMT 后过期，需要再次请求。并且 Expires 受限于本地时间，如果修改了本地时间，可能会造成缓存失效。</li>
+<li>Cache-Control 出现于 HTTP/1.1，优先级高于 Expires 。该属性值表示资源会在 30 秒后过期，需要再次请求。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>public</td>
+<td>表示响应可以被客户端和代理服务器缓存</td>
+</tr>
+<tr>
+<td>private</td>
+<td>表示响应只可以被客户端缓存</td>
+</tr>
+<tr>
+<td>max-age=30</td>
+<td>缓存30秒后就过期，需要重新请求</td>
+</tr>
+<tr>
+<td>s-maxage=30</td>
+<td>覆盖max-age,作用一样，只在代理服务器中生效</td>
+</tr>
+<tr>
+<td>no-store</td>
+<td>不缓存任何响应</td>
+</tr>
+<tr>
+<td>no-cache</td>
+<td>资源被缓存，但是立即失效，下次会发起请求验证资源是否过期</td>
+</tr>
+<tr>
+<td>max-stale=30</td>
+<td>30秒内，即使缓存过期，也使用该缓存</td>
+</tr>
+<tr>
+<td>min-fresh=30</td>
+<td>希望在30秒内获取最新的响应</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>协商缓存</strong> 如果缓存过期了，就需要发起请求验证资源是否有更新。协商缓存可以通过设置两种 HTTP Header 实现：Last-Modified 和 ETag 。当浏览器发起请求验证资源时，如果资源没有做改变，那么服务端就会返回 304 状态码，并且更新浏览器缓存有效期。</li>
+</ul>
+<ol>
+<li>Last-Modified 表示本地文件最后修改日期，If-Modified-Since 会将 Last-Modified 的值发送给服务器，询问服务器在该日期后资源是否有更新，有更新的话就会将新的资源发送回来，否则返回 304 状态码。但是 Last-Modified 存在一些弊端：1.如果本地打开缓存文件，即使没有对文件进行修改，但还是会造成 Last-Modified 被修改，服务端不能命中缓存导致发送相同的资源；2.因为 Last-Modified 只能以秒计时，如果在不可感知的时间内修改完成文件，那么服务端会认为资源还是命中了，不会返回正确的资源</li>
+<li>ETag 类似于文件指纹，If-None-Match 会将当前 ETag 发送给服务器，询问该资源 ETag 是否变动，有变动的话就将新的资源发送回来。并且 ETag 优先级比 Last-Modified 高。</li>
+</ol>
+<ul>
+<li><strong>启发式缓存</strong> 如果什么缓存策略都没设置，那么浏览器会怎么处理？对于这种情况，浏览器会采用一个启发式的算法，通常会取响应头中的 Date 减去 Last-Modified 值的 10% 作为缓存时间。</li>
+</ul>
+<h3 id="6-实际场景应用缓存策略举例"><a href="#6-实际场景应用缓存策略举例" class="headerlink" title="6. 实际场景应用缓存策略举例"></a>6. 实际场景应用缓存策略举例</h3><ul>
+<li><strong>频繁变动的资源</strong> 对于频繁变动的资源，首先需要使用 Cache-Control: no-cache 使浏览器每次都请求服务器，然后配合 ETag 或者 Last-Modified 来验证资源是否有效。这样的做法虽然不能节省请求数量，但是能显著减少响应数据大小。</li>
+<li><strong>代码文件</strong> 这里特指除了 HTML 外的代码文件，因为 HTML 文件一般不缓存或者缓存时间很短。一般来说，现在都会使用工具来打包代码，那么我们就可以对文件名进行哈希处理，只有当代码修改后才会生成新的文件名。基于此，我们就可以给代码文件设置缓存有效期一年 Cache-Control: max-age=31536000，这样只有当 HTML 文件中引入的文件名发生了改变才会去下载最新的代码文件，否则就一直使用缓存。</li>
+</ul>
+<h3 id="7-重绘（Repaint）和回流（Reflow）是啥？如何优化？"><a href="#7-重绘（Repaint）和回流（Reflow）是啥？如何优化？" class="headerlink" title="7. 重绘（Repaint）和回流（Reflow）是啥？如何优化？"></a>7. 重绘（Repaint）和回流（Reflow）是啥？如何优化？</h3><ul>
+<li>重绘是当节点需要更改外观而不会影响布局的，比如改变 color 就叫称为重绘。</li>
+<li>回流是布局或者几何属性需要改变就称为回流。<br>回流必定会发生重绘，重绘不一定会引发回流。回流所需的成本比重绘高的多，改变父节点里的子节点很可能会导致父节点的一系列回流。</li>
+<li>优化方案：</li>
+</ul>
+<ol>
+<li>使用 transform 替代 top</li>
+<li>使用 visibility 替换 display: none ，因为前者只会引起重绘，后者会引发回流（改变了布局）</li>
+<li>不要把节点的属性值放在一个循环里当成循环里的变量</li>
+<li>不要使用 table 布局，可能很小的一个小改动会造成整个 table 的重新布局</li>
+<li>动画实现的速度的选择，动画速度越快，回流次数越多，也可以选择使用requestAnimationFrame</li>
+<li>CSS 选择符从右往左匹配查找，避免节点层级过多</li>
+<li>将频繁重绘或者回流的节点设置为图层，图层能够阻止该节点的渲染行为影响别的节点。比如对于 video 标签来说，浏览器会自动将该节点变为图层。</li>
+</ol>
+<h3 id="8-同源策略是什么？"><a href="#8-同源策略是什么？" class="headerlink" title="8. 同源策略是什么？"></a>8. 同源策略是什么？</h3><p>同源策略是指只有具有相同源的页面才能够共享数据，比如cookie，同源是指页面具有相同的协议、域名、端口号，有一项不同就不是同源。 有同源策略能够保证web网页的安全性。</p>
+<p>DOM 同源策略：禁止对不同源页面 DOM 进行操作。这里主要场景是 iframe 跨域的情况，不同域名的 iframe 是限制互相访问的。</p>
+<p>XMLHttpRequest 同源策略：禁止使用 XHR 对象向不同源的服务器地址发起 HTTP 请求。</p>
+<p>跨域解决方法： 1. CORS（跨域资源共享）； 2. JSONP跨域； 3. 图像ping跨域； 4. 服务器代理； 5. document.domain 跨域； 6. window.name 跨域； 7. location.hash 跨域； 8. postMessage 跨域；</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/laixiangran/p/9064769.html">浏览器同源策略及跨域的解决方法</a></p>
+<h3 id="11-前端需要注意哪些seo-搜索引擎优化-？"><a href="#11-前端需要注意哪些seo-搜索引擎优化-？" class="headerlink" title="11.前端需要注意哪些seo(搜索引擎优化)？"></a>11.前端需要注意哪些seo(搜索引擎优化)？</h3><ul>
+<li>合理的title、description、keywords：搜索对着三项的权重逐个减小，title值强调重点即可，重要关键词出现不要超过2次，而且要靠前，不同页面title要有所不同；description把页面内容高度概括，长度合适，不可过分堆砌关键词，不同页面description有所不同；keywords列举出重要关键词即可</li>
+<li>语义化的HTML代码，符合W3C规范：语义化代码让搜索引擎容易理解网页</li>
+<li>重要内容HTML代码放在最前：搜索引擎抓取HTML顺序是从上到下，有的搜索引擎对抓取长度有限制，保证重要内容一定会被抓取<br>重要内容不要用js输出：爬虫不会执行js获取内容</li>
+<li>少用iframe：搜索引擎不会抓取iframe中的内容</li>
+<li>非装饰性图片必须加alt</li>
+<li>提高网站速度：网站速度是搜索引擎排序的一个重要指标</li>
+</ul>
+<h3 id="12-什么是会话跟踪，有哪几种方法？"><a href="#12-什么是会话跟踪，有哪几种方法？" class="headerlink" title="12.什么是会话跟踪，有哪几种方法？"></a>12.什么是会话跟踪，有哪几种方法？</h3><ul>
+<li>对同一个用户对服务器的连续的请求和接受响应的监视。常用的方法有：</li>
+</ul>
+<ol>
+<li><strong>URL重写</strong> 的技术就是在URL结尾添加一个附加数据以标识该会话,把会话ID通过URL的信息传递过去，以便在服务器端进行识别不同的用户 。</li>
+<li><strong>隐藏表单域</strong> 将会话ID添加到HTML表单元素中提交到服务器,此表单元素并不在客户端显示。</li>
+<li><strong>Cookie</strong> Cookie是Web服务器发送给客户端的一小段信息，客户端请求时可以读取该信息发送到服务器端，进而进行用户的识别。对于客户端的每次请求，服务器都会将Cookie发送到客户端,在客户端可以进行保存,以便下次使用。</li>
+<li><strong>session</strong> 每一个用户都有一个不同的session，各个用户之间是不能共享的，是每个用户所独享的，在session中可以存放信息。在服务器端会创建一个session对象，产生一个sessionID来标识这个session对象，然后将这个sessionID放入到Cookie中发送到客户端，下一次访问时，sessionID会发送到服务器，在服务器端进行识别不同的用户。</li>
+</ol>
+<h3 id="13-Doctype作用-严格模式与混杂模式如何区分？它们有何意义"><a href="#13-Doctype作用-严格模式与混杂模式如何区分？它们有何意义" class="headerlink" title="13.Doctype作用?严格模式与混杂模式如何区分？它们有何意义?"></a>13.Doctype作用?严格模式与混杂模式如何区分？它们有何意义?</h3><ul>
+<li>Doctype声明于文档最前面，告诉浏览器以何种方式来渲染页面，这里有两种模式，严格模式和混杂模式。</li>
+<li><strong>严格模式</strong> 的排版和JS 运作模式是 以该浏览器支持的最高标准运行。</li>
+<li><strong>混杂模式</strong>，向后兼容，模拟老式浏览器，防止浏览器无法兼容页面。</li>
+</ul>
+<h2 id="网络安全面试题"><a href="#网络安全面试题" class="headerlink" title="网络安全面试题"></a>网络安全面试题</h2><h3 id="1-常见的网站漏洞有哪些？"><a href="#1-常见的网站漏洞有哪些？" class="headerlink" title="1.常见的网站漏洞有哪些？"></a>1.常见的网站漏洞有哪些？</h3><p>有跨站脚本攻击（XSS）、跨站请求伪造（CSRF）、点击劫持、SQL注入、DDOS攻击、DNS劫持</p>
+<h3 id="2-简要介绍一下XSS以及XSS如何防御"><a href="#2-简要介绍一下XSS以及XSS如何防御" class="headerlink" title="2.简要介绍一下XSS以及XSS如何防御"></a>2.简要介绍一下XSS以及XSS如何防御</h3><p>跨站脚本攻击是说攻击者通过注入恶意的脚本，在用户浏览网页的时候进行攻击，比如获取cookie或者其他用户身份信息。<br>可以分为存储型和反射型，</p>
+<ul>
+<li>存储型是攻击者输入一些数据并且存储到了数据库中，其他浏览者看到的时候进行攻击，</li>
+<li>反射型的话.不存储在数据库中，往往表现为将攻击代码放在URL地址的请求参数中。</li>
+<li>防御:</li>
+</ul>
+<ol>
+<li><strong>转义字符</strong> 对于用户的输入应该是永远不信任的。最普遍的做法就是转义输入输出的内容，对于引号、尖括号、斜杠进行转义。</li>
+<li><strong>CSP</strong> CSP 本质上就是建立白名单，开发者明确告诉浏览器哪些外部资源可以加载和执行。我们只需要配置规则，如何拦截是由浏览器自己实现的。我们可以通过这种方式来尽量减少 XSS 攻击。通常可以通过两种方式来开启 CSP：1.设置 HTTP Header 中的 Content-Security-Policy；2.设置 meta 标签的方式 <meta http-equiv="Content-Security-Policy">。</li>
+<li>输入内容长度控制</li>
+<li>HTTP-only Cookie: 禁止 JavaScript 读取某些敏感 Cookie，攻击者完成 XSS 注入后也无法窃取此 Cookie。</li>
+<li>验证码：防止脚本冒充用户提交危险操作。</li>
+</ol>
+<h3 id="3-简要介绍一下CSRF-跨站请求伪造-以及如何防御"><a href="#3-简要介绍一下CSRF-跨站请求伪造-以及如何防御" class="headerlink" title="3.简要介绍一下CSRF(跨站请求伪造)以及如何防御"></a>3.简要介绍一下CSRF(跨站请求伪造)以及如何防御</h3><p>攻击者诱导受害者进入第三方网站，在第三方网站中，向被攻击网站发送跨站请求。利用受害者在被攻击网站已经获取的注册凭证，绕过后台的用户验证，达到冒充用户对被攻击的网站执行某项操作的目的。</p>
+<ul>
+<li>防御方法：</li>
+</ul>
+<ol>
+<li><strong>同源检测</strong>：验证 HTTP Referer 或者 Origin 字段；它记录了该 HTTP 请求的来源地址。</li>
+<li><strong>在请求地址中添加 token 并验证；</strong> 服务器下发一个随机 Token，每次发起请求时将 Token 携带上，服务器验证 Token 是否有效。</li>
+<li>在 HTTP 头中自定义属性并验证。把token放到HTTP头的自定义属性里面</li>
+<li><strong>不让第三方网站访问到用户 Cookie。</strong> 可以对 Cookie 设置 <strong>SameSite</strong> 属性。该属性表示 Cookie 不随着跨域请求发送，可以很大程度减少 CSRF 的攻击，但是该属性目前并不是所有浏览器都兼容。</li>
+</ol>
+<h3 id="4-DNS劫持与DNS污染"><a href="#4-DNS劫持与DNS污染" class="headerlink" title="4. DNS劫持与DNS污染"></a>4. DNS劫持与DNS污染</h3><ul>
+<li><p><strong>DNS劫持</strong> DNS劫持就是通过劫持了DNS服务器，通过某些手段取得某域名的解析记录控制权，进而修改此域名的解析结果，导致对该域名的访问由原IP地址转入到修改后的指定IP。DNS劫持通过篡改DNS服务器上的数据返回给用户一个错误的查询结果来实现的。</p>
+</li>
+<li><p><strong>DNS污染</strong>  DNS污染，指的是用户访问一个地址，国内的服务器(非DNS)监控到用户访问的已经被标记地址时，服务器伪装成DNS服务器向用户发回错误的地址的行为。范例，访问Youtube、Facebook之类网站等出现的状况。</p>
+</li>
+</ul>
+<h3 id="5-简要介绍一下SQL注入？"><a href="#5-简要介绍一下SQL注入？" class="headerlink" title="5.简要介绍一下SQL注入？"></a>5.简要介绍一下SQL注入？</h3><ul>
+<li>所谓SQL注入，就是通过把SQL命令插入到Web表单递交或输入域名或页面请求的查询字符串，最终达到欺骗服务器执行恶意的SQL命令.</li>
+<li>防范方法：</li>
+</ul>
+<ol>
+<li>永远不要信任用户的输入。对用户的输入进行校验，可以通过正则表达式，或限制长度；对单引号和双”-“进行转换等。</li>
+<li>永远不要使用动态拼装sql，可以使用参数化的sql或者直接使用存储过程进行数据查询存取。</li>
+<li>永远不要使用管理员权限的数据库连接，为每个应用使用单独的权限有限的数据库连接。</li>
+<li>不要把机密信息直接存放，加密或者hash掉密码和敏感的信息。</li>
+<li>应用的异常信息应该给出尽可能少的提示，最好使用自定义的错误信息对原始错误信息进行包装</li>
+<li>sql注入的检测方法一般采取辅助软件或网站平台来检测，软件一般采用sql注入检测工具jsky,网站平台就有亿思网站安全平台检测工具。</li>
+</ol>
+<h3 id="6-什么是点击劫持？如何防范点击劫持？"><a href="#6-什么是点击劫持？如何防范点击劫持？" class="headerlink" title="6.什么是点击劫持？如何防范点击劫持？"></a>6.什么是点击劫持？如何防范点击劫持？</h3><ul>
+<li>点击劫持是一种视觉欺骗的攻击手段。攻击者将需要攻击的网站通过 iframe 嵌套的方式嵌入自己的网页中，并将 iframe 设置为透明，在页面中透出一个按钮诱导用户点击。</li>
+<li>对于这种攻击方式，推荐防御方法有两种：</li>
+</ul>
+<ol>
+<li><strong>X-FRAME-OPTIONS</strong> 是一个 HTTP 响应头，在现代浏览器有一个很好的支持。这个 HTTP 响应头 就是为了防御用 iframe 嵌套的点击劫持攻击。该响应头有三个值可选，分别是1. DENY，表示页面不允许通过 iframe 的方式展示；2. SAMEORIGIN，表示页面可以在相同域名下通过 iframe 的方式展示； 3. ALLOW-FROM，表示页面可以在指定来源的 iframe 中展示。</li>
+<li><strong>JS 防御</strong> 当通过 iframe 的方式加载页面时，攻击者的网页直接不显示所有内容了.<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;head&gt;</span><br><span class="line">  &lt;style id=<span class="string">&quot;click-jack&quot;</span>&gt;</span><br><span class="line">    html &#123;</span><br><span class="line">      display: none !important;</span><br><span class="line">    &#125;</span><br><span class="line">  &lt;/style&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">  &lt;script&gt;</span><br><span class="line">    <span class="keyword">if</span> (self == top) &#123;</span><br><span class="line">      <span class="keyword">var</span> style = <span class="built_in">document</span>.getElementById(<span class="string">&#x27;click-jack&#x27;</span>)</span><br><span class="line">      <span class="built_in">document</span>.body.removeChild(style)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      top.location = self.location</span><br><span class="line">    &#125;</span><br><span class="line">  &lt;/script&gt;</span><br><span class="line">&lt;/body&gt;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="7-了解CSP吗，介绍一下？"><a href="#7-了解CSP吗，介绍一下？" class="headerlink" title="7.了解CSP吗，介绍一下？"></a>7.了解CSP吗，介绍一下？</h3><p>内容安全策略 (CSP, Content Security Policy) 是一个附加的安全层，用于帮助检测和缓解某些类型的攻击，包括跨站脚本 (XSS) 和数据注入等攻击。 这些攻击可用于实现从数据窃取到网站破坏或作为恶意软件分发版本等用途。</p>
+<h3 id="8-cookie有哪些属性？"><a href="#8-cookie有哪些属性？" class="headerlink" title="8. cookie有哪些属性？"></a>8. cookie有哪些属性？</h3><ul>
+<li>name： 字段为一个cookie的名称。</li>
+<li>value： 字段为一个cookie的值。</li>
+<li>domain： 字段为可以访问此cookie的域名。</li>
+<li>path： 字段为可以访问此cookie的页面路径。</li>
+<li><strong>expires/Max-Age：</strong> 字段为此cookie超时时间。若设置其值为一个时间，那么当到达此时间后，此cookie失效。不设置的话默认值是Session，意思是cookie会和session一起失效。当浏览器关闭(不是浏览器标签页，而是整个浏览器) 后，此cookie失效。</li>
+<li>size： 此cookie大小。</li>
+<li><strong>httpOnly：</strong>  此属性可以规定只有通过HTTP（s）请求时，才会带上该 Cookie。可以防止通过JavaScript脚本获取cookie信息，有效的防止XSS攻击。</li>
+<li><strong>secure：</strong>  此属性规定cookie只能在https协议下才能够发送到服务器。如果当前采用的是http协议，那么浏览器在接受服务器发来的cookie的时候会自动忽略Secure属性。可以在一定程度上防止信息在传递的过程中被监听捕获后信息泄漏。</li>
+<li><strong>sameSite：</strong>  准确的说 SameSite 这个属性有两个可选值，分别是 Strict 和 Lax 。其中 Strict 为严格模式，另一个域发起的任何请求都不会携带该类型的 cookie，能够完美的阻止 CSRF 攻击，但是也可能带来了少许不便之处，例如通过一个导航网站的超链接打开另一个域的网页会因为没有携带 cookie 而导致没有登录等问题。因此 Lax 相对于 Strict 模式来说，放宽了一些。简单来说就是，用 「安全」的 HTTP 方法（GET、HEAD、OPTIONS 和 TRACE）改变了当前页面或者打开了新页面时，可以携带该类型的 cookie。</li>
+</ul>
+<h2 id="Git-面试题"><a href="#Git-面试题" class="headerlink" title="Git 面试题"></a>Git 面试题</h2><h3 id="1-rebase-与-merge的区别"><a href="#1-rebase-与-merge的区别" class="headerlink" title="1. rebase 与 merge的区别?"></a>1. rebase 与 merge的区别?</h3><ol>
+<li>rebase会把你当前分支的 commit 放到公共分支的最后面,所以叫变基。就好像你从公共分支又重新拉出来这个分支一样。</li>
+<li>merge 会把公共分支和你当前的commit 合并在一起，形成一个新的 commit 提交.</li>
+</ol>
+<h3 id="2-git-reset、git-revert-和-git-checkout-有什么区别"><a href="#2-git-reset、git-revert-和-git-checkout-有什么区别" class="headerlink" title="2. git reset、git revert 和 git checkout 有什么区别?"></a>2. git reset、git revert 和 git checkout 有什么区别?</h3><ul>
+<li><strong>从 commit 层面来说：</strong> </li>
+</ul>
+<ol>
+<li>git reset 可以将一个分支的末端指向之前的一个 commit。然后再下次 git 执行垃圾回收的时候，会把这个 commit 之后的 commit 都扔掉。</li>
+<li>git checkout 可以将 HEAD 移到一个新的分支，并更新工作目录。因为可能会覆盖本地的修改，所以执行这个指令之前，你需要 stash 或者 commit 暂存区和工作区的更改。</li>
+<li>git revert 和 git reset 的目的是一样的，但是做法不同，它会以创建新的 commit 的方式来撤销 commit，这样能保留之前的 commit 历史，比较安全。另外，同样因为可能会覆盖本地的修改，所以执行这个指令之前，你需要 stash 或者 commit 暂存区和工作区的更改。</li>
+</ol>
+<ul>
+<li><strong>从文件层面来说</strong></li>
+</ul>
+<ol>
+<li>git reset 只是把文件从历史记录区拿到暂存区，不影响工作区的内容。</li>
+<li>git checkout 则是把文件从暂存区拿到工作区，不影响历史记录的内容。</li>
+<li>git revert 不支持文件层面的操作。</li>
+</ol>
+<p><img src="git-reset.png" alt="git"></p>
+<h2 id="移动端面试题"><a href="#移动端面试题" class="headerlink" title="移动端面试题"></a>移动端面试题</h2><h3 id="1-click在ios上有300ms延迟，原因及如何解决？"><a href="#1-click在ios上有300ms延迟，原因及如何解决？" class="headerlink" title="1. click在ios上有300ms延迟，原因及如何解决？"></a>1. click在ios上有300ms延迟，原因及如何解决？</h3><ul>
+<li><strong>(1)粗暴型，禁用缩放</strong>  <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, user-scalable=no&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><strong>(2)利用FastClick，其原理是：</strong></li>
+<li>检测到touchend事件后，立刻触发模拟click事件，并且把浏览器300毫秒之后真正触发的事件给阻断掉</li>
+</ul>
+<h3 id="2-移动端如何适配"><a href="#2-移动端如何适配" class="headerlink" title="2. 移动端如何适配"></a>2. 移动端如何适配</h3><p>参考链接： <a target="_blank" rel="noopener" href="https://juejin.im/post/5cddf289f265da038f77696c">移动端如何适配</a></p>
+<ul>
+<li>在web中，浏览器为我们提供了window.devicePixelRatio来帮助我们获取dpr。</li>
+<li>在css中，可以使用媒体查询min-device-pixel-ratio，区分dpr：<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@media</span> (<span class="attribute">-webkit-min-device-pixel-ratio:</span> <span class="number">2</span>),(<span class="attribute">min-device-pixel-ratio:</span> <span class="number">2</span>)&#123; &#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="工程化面试题"><a href="#工程化面试题" class="headerlink" title="工程化面试题"></a>工程化面试题</h2><h3 id="1-什么是函数式编程？"><a href="#1-什么是函数式编程？" class="headerlink" title="1. 什么是函数式编程？"></a>1. 什么是函数式编程？</h3><ul>
+<li>函数式编程是声明式编程的一部分。javascript中的函数是第一类公民，这意味着函数是数据，你可以像保存变量一样在应用程序中保存、检索和传递这些函数。</li>
+<li>函数式编程有如下核心概念：</li>
+</ul>
+<ol>
+<li>不可变性(Immutability)</li>
+</ol>
+<ul>
+<li>不可变性意味着不可改变。 在函数式编程中，你无法更改数据，也不能更改。 如果要改变或更改数据，则必须复制数据副本来更改。<strong>Object.assign</strong></li>
+</ul>
+<ol start="2">
+<li>纯函数</li>
+</ol>
+<ul>
+<li>纯函数是始终接受一个或多个参数并计算参数并返回数据或函数的函数。 它没有副作用，例如设置全局状态，更改应用程序状态，它总是将参数视为不可变数据。</li>
+</ul>
+<ol start="3">
+<li>数据转换</li>
+</ol>
+<ul>
+<li>例如map、filter、reduce方法，所有这些函数都不改变现有的数据，而是返回新的数组或对象。</li>
+</ul>
+<ol start="4">
+<li>高阶函数</li>
+</ol>
+<ul>
+<li>Array.map，Array.filter和Array.reduce是高阶函数，因为它们将函数作为参数。</li>
+</ul>
+<ol start="5">
+<li>递归</li>
+</ol>
+<ul>
+<li>递归是一种函数在满足一定条件之前调用自身的技术。</li>
+</ul>
+<ol start="6">
+<li>组合</li>
+</ol>
+<ul>
+<li>在React中，我们将功能划分为小型可重用的纯函数，我们必须将所有这些可重用的函数放在一起，最终使其成为产品。 将所有较小的函数组合成更大的函数，最终，得到一个应用程序，这称为组合。</li>
+</ul>
+<h3 id="2-npm包版本号规范？"><a href="#2-npm包版本号规范？" class="headerlink" title="2. npm包版本号规范？"></a>2. npm包版本号规范？</h3><ul>
+<li>主版本号：当你做了不兼容的 API 修改，</li>
+<li>次版本号：当你做了向下兼容的功能性新增，</li>
+<li>修订号：当你做了向下兼容的问题修正。</li>
+</ul>
+<h3 id="3-谈谈浏览器兼容策略？"><a href="#3-谈谈浏览器兼容策略？" class="headerlink" title="3. 谈谈浏览器兼容策略？"></a>3. 谈谈浏览器兼容策略？</h3><ul>
+<li>渐进增强： 保证低版本浏览器的体验，对于支持新特性的新浏览器提供稍好的体验。</li>
+<li>优雅降级：为现代浏览器提供最好的体验，而旧浏览器则退而求之次，保证大概的功能.</li>
+</ul>
+<h3 id="4-进程与线程的区别"><a href="#4-进程与线程的区别" class="headerlink" title="4. 进程与线程的区别"></a>4. 进程与线程的区别</h3><ul>
+<li>进程是cpu资源分配的最小单位（是能拥有资源和独立运行的最小单位）。</li>
+<li>线程是cpu调度的最小单位（线程是建立在进程的基础上的一次程序运行单位，一个进程中可以有多个线程）</li>
+<li>它们的区别如下：</li>
+</ul>
+<ol>
+<li>地址空间：同一进程的线程共享本进程的地址空间，而进程之间是独立的地址空间。</li>
+<li>资源拥有：同一进程内的线程共享本进程的资源如内存、I/O、cpu等，但是进程之间的资源是独立的。</li>
+<li>一个进程崩溃后，在保护模式下不会对其他进程产生影响，但是一个线程崩溃整个进程都会死掉，所以多进程要比多线程健壮。</li>
+<li>线程执行开销小，但是不利于资源的管理和保护。线程适合在SMP机器（双CPU系统）上运行。进程执行开销大，但是能够很好的进行资源管理和保护。进程可以跨机器前移。</li>
+<li>对资源的管理和保护要求高，不限制开销和效率时，使用多进程。要求效率高，频繁切换时，资源的保护管理要求不是很高时，使用多线程。</li>
+</ol>
+<h3 id="5-javascript的事件循环？"><a href="#5-javascript的事件循环？" class="headerlink" title="5. javascript的事件循环？"></a>5. javascript的事件循环？</h3><ul>
+<li>执行一个宏任务（栈中没有就从事件队列中获取）</li>
+<li>执行过程中如果遇到微任务，就将它添加到微任务的任务队列中</li>
+<li>宏任务执行完毕后，立即执行当前微任务队列中的所有微任务（依次执行）</li>
+<li>当前宏任务执行完毕，开始检查渲染，然后GUI线程接管渲染</li>
+<li>渲染完毕后，JS线程继续接管，开始下一个宏任务（从事件队列中获取）</li>
+</ul>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>Author：<a href="https://nanno12.github.io">Nanno</a>
+            <p>原文链接：<a href="https://nanno12.github.io/2020/06/08/2020-06-08-%E9%9D%A2%E8%AF%95%E9%A2%98%E7%BB%BC%E5%90%88(%E4%BA%8C)/">https://nanno12.github.io/2020/06/08/2020-06-08-%E9%9D%A2%E8%AF%95%E9%A2%98%E7%BB%BC%E5%90%88(%E4%BA%8C)/</a>
+            <p>发表日期：<a href="https://nanno12.github.io/2020/06/08/2020-06-08-%E9%9D%A2%E8%AF%95%E9%A2%98%E7%BB%BC%E5%90%88(%E4%BA%8C)/">June 8th 2020, 11:33:00 am</a>
+            <p>更新日期：<a href="https://nanno12.github.io/2020/06/08/2020-06-08-%E9%9D%A2%E8%AF%95%E9%A2%98%E7%BB%BC%E5%90%88(%E4%BA%8C)/">September 2nd 2020, 2:12:35 pm</a>
+            <p>版权声明：本文采用<a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2020/06/08/2020-06-08-vue%E6%80%BB%E7%BB%93%E9%9D%A2%E8%AF%95/" title= "vue总结面试">
+                    <div class="nextTitle">vue总结面试</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2020/06/08/2020-06-08-%E9%9D%A2%E8%AF%95%E9%A2%98%E7%BB%BC%E5%90%88/" title= "web前端面试(一)">
+                    <div class="prevTitle">web前端面试(一)</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- gitalk评论 -->
+
+    <!-- utteranc评论 -->
+
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:nannow127@gmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="https://github.com/nanno12" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/example_qr.png" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E9%83%A8%E5%88%86"><span class="toc-number">1.</span> <span class="toc-text">性能优化部分</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%87%8F%E5%B0%91HTTP%E8%AF%B7%E6%B1%82"><span class="toc-number">1.1.</span> <span class="toc-text">1.减少HTTP请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BD%BF%E7%94%A8CDN"><span class="toc-number">1.2.</span> <span class="toc-text">2.使用CDN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%BA%E6%96%87%E4%BB%B6%E5%A4%B4%E6%8C%87%E5%AE%9AExpires%E6%88%96Cache-Control%EF%BC%8C%E4%BD%BF%E5%86%85%E5%AE%B9%E5%85%B7%E6%9C%89%E7%BC%93%E5%AD%98%E6%80%A7%E3%80%82"><span class="toc-number">1.3.</span> <span class="toc-text">3.为文件头指定Expires或Cache-Control，使内容具有缓存性。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%81%BF%E5%85%8D%E7%A9%BA%E7%9A%84src%E5%92%8Chref"><span class="toc-number">1.4.</span> <span class="toc-text">4. 避免空的src和href</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%BD%BF%E7%94%A8gzip%E5%8E%8B%E7%BC%A9%E5%86%85%E5%AE%B9"><span class="toc-number">1.5.</span> <span class="toc-text">5. 使用gzip压缩内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%8A%8ACSS%E6%94%BE%E5%88%B0%E9%A1%B6%E9%83%A8"><span class="toc-number">1.6.</span> <span class="toc-text">6. 把CSS放到顶部</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%8A%8AJS%E6%94%BE%E5%88%B0%E5%BA%95%E9%83%A8"><span class="toc-number">1.7.</span> <span class="toc-text">7. 把JS放到底部</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E9%81%BF%E5%85%8D%E4%BD%BF%E7%94%A8CSS%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.8.</span> <span class="toc-text">8. 避免使用CSS表达式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-%E5%B0%86CSS%E5%92%8CJS%E6%94%BE%E5%88%B0%E5%A4%96%E9%83%A8%E6%96%87%E4%BB%B6%E4%B8%AD"><span class="toc-number">1.9.</span> <span class="toc-text">9. 将CSS和JS放到外部文件中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-%E5%87%8F%E5%B0%91DNS%E6%9F%A5%E6%89%BE"><span class="toc-number">1.10.</span> <span class="toc-text">10.减少DNS查找</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E7%B2%BE%E7%AE%80CSS%E5%92%8CJS"><span class="toc-number">1.11.</span> <span class="toc-text">11.精简CSS和JS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-%E9%81%BF%E5%85%8D%E8%B7%B3%E8%BD%AC"><span class="toc-number">1.12.</span> <span class="toc-text">12.避免跳转</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-%E5%89%94%E9%99%A4%E9%87%8D%E5%A4%8D%E7%9A%84JS%E5%92%8CCSS"><span class="toc-number">1.13.</span> <span class="toc-text">13.剔除重复的JS和CSS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-%E9%85%8D%E7%BD%AEETags"><span class="toc-number">1.14.</span> <span class="toc-text">14.配置ETags</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15-%E4%BD%BFAJAX%E5%8F%AF%E7%BC%93%E5%AD%98%EF%BC%8C%E4%BD%BF%E7%94%A8GET%E6%9D%A5%E5%AE%8C%E6%88%90AJAX%E8%AF%B7%E6%B1%82"><span class="toc-number">1.15.</span> <span class="toc-text">15.使AJAX可缓存，使用GET来完成AJAX请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16-%E5%BB%B6%E8%BF%9F%E5%8A%A0%E8%BD%BD%EF%BC%8C%E9%A2%84%E5%8A%A0%E8%BD%BD"><span class="toc-number">1.16.</span> <span class="toc-text">16.延迟加载，预加载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#17-%E5%87%8F%E5%B0%91DOM%E5%85%83%E7%B4%A0%E4%B8%AA%E6%95%B0"><span class="toc-number">1.17.</span> <span class="toc-text">17.减少DOM元素个数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#18-%E5%B0%BD%E9%87%8F%E5%87%8F%E5%B0%91iframe%E7%9A%84%E4%B8%AA%E6%95%B0"><span class="toc-number">1.18.</span> <span class="toc-text">18.尽量减少iframe的个数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#19-%E5%87%8F%E5%B0%91Cookie%E7%9A%84%E5%A4%A7%E5%B0%8F"><span class="toc-number">1.19.</span> <span class="toc-text">19.减少Cookie的大小</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#20-%E7%94%A8%E4%BB%A3%E6%9B%BF-import"><span class="toc-number">1.20.</span> <span class="toc-text">20.用代替@import</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#webpack%E7%9B%B8%E5%85%B3%E9%9D%A2%E8%AF%95%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">webpack相关面试题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AFwebpack"><span class="toc-number">2.1.</span> <span class="toc-text">1. 什么是webpack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-webpack%E4%B8%8Egrunt%E3%80%81gulp%E7%9A%84%E4%B8%8D%E5%90%8C%EF%BC%9F"><span class="toc-number">2.2.</span> <span class="toc-text">2. webpack与grunt、gulp的不同？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%BB%80%E4%B9%88%E6%98%AFbundle-%E4%BB%80%E4%B9%88%E6%98%AFchunk%EF%BC%8C%E4%BB%80%E4%B9%88%E6%98%AFmodule"><span class="toc-number">2.3.</span> <span class="toc-text">3.什么是bundle,什么是chunk，什么是module?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%BB%80%E4%B9%88%E6%98%AFLoader-%E4%BB%80%E4%B9%88%E6%98%AFPlugin"><span class="toc-number">2.4.</span> <span class="toc-text">4.什么是Loader?什么是Plugin?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%9C%89%E5%93%AA%E4%BA%9B%E5%B8%B8%E8%A7%81%E7%9A%84Loader%EF%BC%9F%E4%BB%96%E4%BB%AC%E6%98%AF%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98%E7%9A%84%EF%BC%9F"><span class="toc-number">2.5.</span> <span class="toc-text">5. 有哪些常见的Loader？他们是解决什么问题的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%9C%89%E5%93%AA%E4%BA%9B%E5%B8%B8%E8%A7%81%E7%9A%84Plugin%EF%BC%9F"><span class="toc-number">2.6.</span> <span class="toc-text">6. 有哪些常见的Plugin？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-Loader%E5%92%8CPlugin%E7%9A%84%E4%B8%8D%E5%90%8C%EF%BC%9F"><span class="toc-number">2.7.</span> <span class="toc-text">7. Loader和Plugin的不同？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E9%85%8D%E7%BD%AE%E9%97%AE%E9%A2%98-%E5%A6%82%E4%BD%95%E5%8F%AF%E4%BB%A5%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90webpack%E9%85%8D%E7%BD%AE%EF%BC%9F"><span class="toc-number">2.8.</span> <span class="toc-text">8. 配置问题:如何可以自动生成webpack配置？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-webpack-dev-server%E5%92%8Chttp%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%A6%82nginx%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="toc-number">2.9.</span> <span class="toc-text">9. webpack-dev-server和http服务器如nginx有什么区别?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-%E4%BB%80%E4%B9%88%E6%98%AF%E6%A8%A1%E5%9D%97%E7%83%AD%E6%9B%B4%E6%96%B0%EF%BC%9F"><span class="toc-number">2.10.</span> <span class="toc-text">10. 什么是模块热更新？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E4%BB%80%E4%B9%88%E6%98%AF%E9%95%BF%E7%BC%93%E5%AD%98%EF%BC%9F%E5%9C%A8webpack%E4%B8%AD%E5%A6%82%E4%BD%95%E5%81%9A%E5%88%B0%E9%95%BF%E7%BC%93%E5%AD%98%E4%BC%98%E5%8C%96%EF%BC%9F"><span class="toc-number">2.11.</span> <span class="toc-text">11. 什么是长缓存？在webpack中如何做到长缓存优化？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-webpack%E7%9A%84%E6%9E%84%E5%BB%BA%E6%B5%81%E7%A8%8B%E6%98%AF%E4%BB%80%E4%B9%88-%E4%BB%8E%E8%AF%BB%E5%8F%96%E9%85%8D%E7%BD%AE%E5%88%B0%E8%BE%93%E5%87%BA%E6%96%87%E4%BB%B6%E8%BF%99%E4%B8%AA%E8%BF%87%E7%A8%8B%E5%B0%BD%E9%87%8F%E8%AF%B4%E5%85%A8"><span class="toc-number">2.12.</span> <span class="toc-text">12.webpack的构建流程是什么?从读取配置到输出文件这个过程尽量说全</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-%E6%98%AF%E5%90%A6%E5%86%99%E8%BF%87Loader%E5%92%8CPlugin%EF%BC%9F%E6%8F%8F%E8%BF%B0%E4%B8%80%E4%B8%8B%E7%BC%96%E5%86%99loader%E6%88%96plugin%E7%9A%84%E6%80%9D%E8%B7%AF%EF%BC%9F"><span class="toc-number">2.13.</span> <span class="toc-text">13. 是否写过Loader和Plugin？描述一下编写loader或plugin的思路？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8webpack%E6%9D%A5%E4%BC%98%E5%8C%96%E5%89%8D%E7%AB%AF%E6%80%A7%E8%83%BD%EF%BC%9F"><span class="toc-number">2.14.</span> <span class="toc-text">14.如何利用webpack来优化前端性能？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15-webpack%E3%80%81rollup%E3%80%81parcel%E4%BC%98%E5%8A%A3%EF%BC%9F"><span class="toc-number">2.15.</span> <span class="toc-text">15. webpack、rollup、parcel优劣？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16-%E5%A6%82%E4%BD%95%E6%8F%90%E9%AB%98webpack%E7%9A%84%E6%89%93%E5%8C%85%E9%80%9F%E5%BA%A6"><span class="toc-number">2.16.</span> <span class="toc-text">16. 如何提高webpack的打包速度?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#17-%E5%A6%82%E4%BD%95%E6%8F%90%E9%AB%98webpack%E7%9A%84%E6%9E%84%E5%BB%BA%E9%80%9F%E5%BA%A6%EF%BC%9F"><span class="toc-number">2.17.</span> <span class="toc-text">17. 如何提高webpack的构建速度？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#18-AMD%E5%92%8CCMD%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-number">2.18.</span> <span class="toc-text">18. AMD和CMD的区别？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#19-%E4%BB%8B%E7%BB%8D%E6%A8%A1%E5%9D%97%E5%8C%96%E5%8F%91%E5%B1%95%E5%8E%86%E7%A8%8B"><span class="toc-number">2.19.</span> <span class="toc-text">19. 介绍模块化发展历程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-number">3.</span> <span class="toc-text">浏览器相关知识点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AApostMessage%E8%B7%A8%E5%9F%9F"><span class="toc-number">3.1.</span> <span class="toc-text">1.实现一个postMessage跨域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-cookie%EF%BC%8ClocalStorage%EF%BC%8CsessionStorage%EF%BC%8CindexDB%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">3.2.</span> <span class="toc-text">2. cookie，localStorage，sessionStorage，indexDB的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-cookie%E6%9F%90%E4%BA%9B%E5%B1%9E%E6%80%A7%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-number">3.3.</span> <span class="toc-text">3. cookie某些属性的作用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Service-Worker"><span class="toc-number">3.4.</span> <span class="toc-text">4.Service Worker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%BC%BA%E7%BC%93%E5%AD%98%E5%92%8C%E5%8D%8F%E5%95%86%E7%BC%93%E5%AD%98"><span class="toc-number">3.5.</span> <span class="toc-text">5. 强缓存和协商缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E5%AE%9E%E9%99%85%E5%9C%BA%E6%99%AF%E5%BA%94%E7%94%A8%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5%E4%B8%BE%E4%BE%8B"><span class="toc-number">3.6.</span> <span class="toc-text">6. 实际场景应用缓存策略举例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E9%87%8D%E7%BB%98%EF%BC%88Repaint%EF%BC%89%E5%92%8C%E5%9B%9E%E6%B5%81%EF%BC%88Reflow%EF%BC%89%E6%98%AF%E5%95%A5%EF%BC%9F%E5%A6%82%E4%BD%95%E4%BC%98%E5%8C%96%EF%BC%9F"><span class="toc-number">3.7.</span> <span class="toc-text">7. 重绘（Repaint）和回流（Reflow）是啥？如何优化？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">3.8.</span> <span class="toc-text">8. 同源策略是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E5%89%8D%E7%AB%AF%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E5%93%AA%E4%BA%9Bseo-%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E4%BC%98%E5%8C%96-%EF%BC%9F"><span class="toc-number">3.9.</span> <span class="toc-text">11.前端需要注意哪些seo(搜索引擎优化)？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-%E4%BB%80%E4%B9%88%E6%98%AF%E4%BC%9A%E8%AF%9D%E8%B7%9F%E8%B8%AA%EF%BC%8C%E6%9C%89%E5%93%AA%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9F"><span class="toc-number">3.10.</span> <span class="toc-text">12.什么是会话跟踪，有哪几种方法？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-Doctype%E4%BD%9C%E7%94%A8-%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F%E4%B8%8E%E6%B7%B7%E6%9D%82%E6%A8%A1%E5%BC%8F%E5%A6%82%E4%BD%95%E5%8C%BA%E5%88%86%EF%BC%9F%E5%AE%83%E4%BB%AC%E6%9C%89%E4%BD%95%E6%84%8F%E4%B9%89"><span class="toc-number">3.11.</span> <span class="toc-text">13.Doctype作用?严格模式与混杂模式如何区分？它们有何意义?</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E9%9D%A2%E8%AF%95%E9%A2%98"><span class="toc-number">4.</span> <span class="toc-text">网络安全面试题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%B8%B8%E8%A7%81%E7%9A%84%E7%BD%91%E7%AB%99%E6%BC%8F%E6%B4%9E%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-number">4.1.</span> <span class="toc-text">1.常见的网站漏洞有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%AE%80%E8%A6%81%E4%BB%8B%E7%BB%8D%E4%B8%80%E4%B8%8BXSS%E4%BB%A5%E5%8F%8AXSS%E5%A6%82%E4%BD%95%E9%98%B2%E5%BE%A1"><span class="toc-number">4.2.</span> <span class="toc-text">2.简要介绍一下XSS以及XSS如何防御</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%AE%80%E8%A6%81%E4%BB%8B%E7%BB%8D%E4%B8%80%E4%B8%8BCSRF-%E8%B7%A8%E7%AB%99%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0-%E4%BB%A5%E5%8F%8A%E5%A6%82%E4%BD%95%E9%98%B2%E5%BE%A1"><span class="toc-number">4.3.</span> <span class="toc-text">3.简要介绍一下CSRF(跨站请求伪造)以及如何防御</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-DNS%E5%8A%AB%E6%8C%81%E4%B8%8EDNS%E6%B1%A1%E6%9F%93"><span class="toc-number">4.4.</span> <span class="toc-text">4. DNS劫持与DNS污染</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E7%AE%80%E8%A6%81%E4%BB%8B%E7%BB%8D%E4%B8%80%E4%B8%8BSQL%E6%B3%A8%E5%85%A5%EF%BC%9F"><span class="toc-number">4.5.</span> <span class="toc-text">5.简要介绍一下SQL注入？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E4%BB%80%E4%B9%88%E6%98%AF%E7%82%B9%E5%87%BB%E5%8A%AB%E6%8C%81%EF%BC%9F%E5%A6%82%E4%BD%95%E9%98%B2%E8%8C%83%E7%82%B9%E5%87%BB%E5%8A%AB%E6%8C%81%EF%BC%9F"><span class="toc-number">4.6.</span> <span class="toc-text">6.什么是点击劫持？如何防范点击劫持？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E4%BA%86%E8%A7%A3CSP%E5%90%97%EF%BC%8C%E4%BB%8B%E7%BB%8D%E4%B8%80%E4%B8%8B%EF%BC%9F"><span class="toc-number">4.7.</span> <span class="toc-text">7.了解CSP吗，介绍一下？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-cookie%E6%9C%89%E5%93%AA%E4%BA%9B%E5%B1%9E%E6%80%A7%EF%BC%9F"><span class="toc-number">4.8.</span> <span class="toc-text">8. cookie有哪些属性？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-%E9%9D%A2%E8%AF%95%E9%A2%98"><span class="toc-number">5.</span> <span class="toc-text">Git 面试题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-rebase-%E4%B8%8E-merge%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">5.1.</span> <span class="toc-text">1. rebase 与 merge的区别?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-git-reset%E3%80%81git-revert-%E5%92%8C-git-checkout-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="toc-number">5.2.</span> <span class="toc-text">2. git reset、git revert 和 git checkout 有什么区别?</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A7%BB%E5%8A%A8%E7%AB%AF%E9%9D%A2%E8%AF%95%E9%A2%98"><span class="toc-number">6.</span> <span class="toc-text">移动端面试题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-click%E5%9C%A8ios%E4%B8%8A%E6%9C%89300ms%E5%BB%B6%E8%BF%9F%EF%BC%8C%E5%8E%9F%E5%9B%A0%E5%8F%8A%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%EF%BC%9F"><span class="toc-number">6.1.</span> <span class="toc-text">1. click在ios上有300ms延迟，原因及如何解决？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%A6%82%E4%BD%95%E9%80%82%E9%85%8D"><span class="toc-number">6.2.</span> <span class="toc-text">2. 移动端如何适配</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E7%A8%8B%E5%8C%96%E9%9D%A2%E8%AF%95%E9%A2%98"><span class="toc-number">7.</span> <span class="toc-text">工程化面试题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%EF%BC%9F"><span class="toc-number">7.1.</span> <span class="toc-text">1. 什么是函数式编程？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-npm%E5%8C%85%E7%89%88%E6%9C%AC%E5%8F%B7%E8%A7%84%E8%8C%83%EF%BC%9F"><span class="toc-number">7.2.</span> <span class="toc-text">2. npm包版本号规范？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%B0%88%E8%B0%88%E6%B5%8F%E8%A7%88%E5%99%A8%E5%85%BC%E5%AE%B9%E7%AD%96%E7%95%A5%EF%BC%9F"><span class="toc-number">7.3.</span> <span class="toc-text">3. 谈谈浏览器兼容策略？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">7.4.</span> <span class="toc-text">4. 进程与线程的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-javascript%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%9F"><span class="toc-number">7.5.</span> <span class="toc-text">5. javascript的事件循环？</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 27
+        </div>
+        <!-- search  -->
+        
+            <div class="site-search popup-trigger">
+                <span class="iconfont-archer search-icon">&#xe627;</span>
+            </div>
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/24</span><a class="archive-post-title" href= "/2020/08/24/2020-08-24-js%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86%E5%A4%8D%E4%B9%A0/" >js知识整理复习（腾讯课堂）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2019-06-03-VSCode%E9%BB%98%E8%AE%A4%E5%8A%9F%E8%83%BD%E4%BB%A5%E5%8F%8A%E6%8F%92%E4%BB%B6/" >vscode代码片段</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-01-22-%E7%AC%AC%E4%BA%94%E7%AB%A0%20%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B/" >第五章 引用类型</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-03-16-javaScript%E7%AE%80%E4%BB%8B%E5%8F%8A%E4%BD%BF%E7%94%A8/" >javaScript简介及使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-03-23-element-tag%E6%A0%87%E7%AD%BE%E5%8F%AF%E4%BF%AE%E6%94%B9/" >element标签取值</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-03-23-js%E9%9D%A2%E8%AF%95%E9%A2%98/" >js面试题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-03-23-%E5%B8%B8%E8%A7%81%E7%9A%84http%E7%8A%B6%E6%80%81%E7%A0%81/" >常见的HTTP状态码</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-03-25-css%E9%9D%A2%E8%AF%95%E9%A2%98/" >css面试题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-04-02-js%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E6%9C%89%E6%9F%90%E5%85%83%E7%B4%A0/" >js判断数组某元素是否存在</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-04-02-vue%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8C%87%E4%BB%A4/" >vue自定义指令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-04-02-%E9%94%AE%E7%9B%98%E4%BA%8B%E4%BB%B6/" >键盘事件</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-05-08-webpack%E6%89%93%E5%8C%85/" >webpack面试题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-06-03-flex%E5%B8%83%E5%B1%80/" >flex布局</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-06-03-git%E5%91%BD%E4%BB%A4/" >Git</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-06-04-CSS%E4%B8%8D%E5%AE%9A%E9%AB%98%E5%9E%82%E7%9B%B4%E5%B1%85%E4%B8%AD/" >CSS垂直水平居中</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-06-05-ele+vue%20%E8%A1%A8%E6%A0%BC%E5%A4%9A%E9%80%89%E5%9B%9E%E6%98%BE/" >ele+vue 表格多选回显</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-06-05-elementUI%E6%A1%86%E6%9E%B6%E9%97%AE%E9%A2%98%E9%9B%86%E5%90%88/" >elementUI框架问题集合</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/09</span><a class="archive-post-title" href= "/2020/07/09/2020-07-09-js%E6%9C%89%E5%85%B3js%E5%8E%9F%E5%9E%8B%E3%80%81%E5%8E%9F%E5%9E%8B%E9%93%BE%E3%80%81%E4%BD%9C%E7%94%A8%E5%9F%9F%E9%93%BE%E8%AF%95%E9%A2%98/" >有关js原型、原型链、作用域链试题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/10</span><a class="archive-post-title" href= "/2020/06/10/2020-06-10-react%E8%AF%AD%E6%B3%95/" >React</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/08</span><a class="archive-post-title" href= "/2020/06/08/2020-06-08-Vuex/" >Vuex</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/08</span><a class="archive-post-title" href= "/2020/06/08/2020-06-08-vue-router/" >Vue-router</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/08</span><a class="archive-post-title" href= "/2020/06/08/2020-06-08-vue%E5%BC%80%E5%8F%91%E5%BF%85%E9%A1%BB%E7%9F%A5%E8%AF%86/" >vue开发必须知识</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/08</span><a class="archive-post-title" href= "/2020/06/08/2020-06-08-vue%E6%80%BB%E7%BB%93%E9%9D%A2%E8%AF%95/" >vue总结面试</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/08</span><a class="archive-post-title" href= "/2020/06/08/2020-06-08-%E9%9D%A2%E8%AF%95%E9%A2%98%E7%BB%BC%E5%90%88(%E4%BA%8C)/" >web前端面试题(二)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/08</span><a class="archive-post-title" href= "/2020/06/08/2020-06-08-%E9%9D%A2%E8%AF%95%E9%A2%98%E7%BB%BC%E5%90%88/" >web前端面试(一)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/04</span><a class="archive-post-title" href= "/2020/06/04/2019-11-14-vue%E5%BD%93%E5%89%8D%E6%97%B6%E9%97%B4%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B9%B4%E6%9C%88%E6%97%A5/" >vue当前时间转换成年月日</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/04</span><a class="archive-post-title" href= "/2020/06/04/2020-05-17-js%E6%95%B0%E7%BB%84%E6%B1%82%E5%92%8C%E6%96%B9%E6%B3%95/" >js数组求和方法</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="使用"><span class="iconfont-archer">&#xe606;</span>使用</span>
+    
+        <span class="sidebar-tag-name" data-tags="vscode"><span class="iconfont-archer">&#xe606;</span>vscode</span>
+    
+        <span class="sidebar-tag-name" data-tags="JavaScript"><span class="iconfont-archer">&#xe606;</span>JavaScript</span>
+    
+        <span class="sidebar-tag-name" data-tags="Element"><span class="iconfont-archer">&#xe606;</span>Element</span>
+    
+        <span class="sidebar-tag-name" data-tags="面试"><span class="iconfont-archer">&#xe606;</span>面试</span>
+    
+        <span class="sidebar-tag-name" data-tags="Http"><span class="iconfont-archer">&#xe606;</span>Http</span>
+    
+        <span class="sidebar-tag-name" data-tags="Vue"><span class="iconfont-archer">&#xe606;</span>Vue</span>
+    
+        <span class="sidebar-tag-name" data-tags="Css"><span class="iconfont-archer">&#xe606;</span>Css</span>
+    
+        <span class="sidebar-tag-name" data-tags="Git"><span class="iconfont-archer">&#xe606;</span>Git</span>
+    
+        <span class="sidebar-tag-name" data-tags="框架"><span class="iconfont-archer">&#xe606;</span>框架</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="其他"><span class="iconfont-archer">&#xe60a;</span>其他</span>
+    
+        <span class="sidebar-category-name" data-categories="js方法"><span class="iconfont-archer">&#xe60a;</span>js方法</span>
+    
+        <span class="sidebar-category-name" data-categories="js"><span class="iconfont-archer">&#xe60a;</span>js</span>
+    
+        <span class="sidebar-category-name" data-categories="css"><span class="iconfont-archer">&#xe60a;</span>css</span>
+    
+        <span class="sidebar-category-name" data-categories="vue"><span class="iconfont-archer">&#xe60a;</span>vue</span>
+    
+        <span class="sidebar-category-name" data-categories="配置"><span class="iconfont-archer">&#xe60a;</span>配置</span>
+    
+        <span class="sidebar-category-name" data-categories="Element问题"><span class="iconfont-archer">&#xe60a;</span>Element问题</span>
+    
+        <span class="sidebar-category-name" data-categories="react"><span class="iconfont-archer">&#xe60a;</span>react</span>
+    
+        <span class="sidebar-category-name" data-categories="web前端"><span class="iconfont-archer">&#xe60a;</span>web前端</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Nanno"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+        <div class="site-search">
+  <div class="algolia-popup popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="iconfont-archer">&#xe609;</i>
+    </span>
+  </div>
+</div>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.8.0/dist/instantsearch.min.js" defer></script>
+        <script src="/scripts/search.js" defer></script>
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
