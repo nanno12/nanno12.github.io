@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Nanno">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Nanno">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="">
+    <meta name="description" content="ES6面试参考： ES6高频面试题目整理 ECMAScript 6 入门-阮一峰 1.箭头函数和普通函数的区别是什么？ 普通函数this：   this总是代表它的直接调用者。 在默认情况下，没找到直接调用者，this指的是window。 在严格模式下，没有直接调用者的函数中的this是undefined。 使用call,apply,bind绑定，this指的是绑定的对象。   箭头函数this：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ES6 总结">
+<meta property="og:url" content="https://nanno12.github.io/2020/09/14/Esc/index.html">
+<meta property="og:site_name" content="Nanno">
+<meta property="og:description" content="ES6面试参考： ES6高频面试题目整理 ECMAScript 6 入门-阮一峰 1.箭头函数和普通函数的区别是什么？ 普通函数this：   this总是代表它的直接调用者。 在默认情况下，没找到直接调用者，this指的是window。 在严格模式下，没有直接调用者的函数中的this是undefined。 使用call,apply,bind绑定，this指的是绑定的对象。   箭头函数this：">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-09-14T03:33:00.000Z">
+<meta property="article:modified_time" content="2020-09-14T05:41:12.620Z">
+<meta property="article:author" content="Nanno">
+<meta property="article:tag" content="面试">
+<meta property="article:tag" content="Es">
+<meta name="twitter:card" content="summary">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    
+    <title>ES6 总结 · NANNO</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+<meta name="generator" content="Hexo 5.1.1"></head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >NANNO</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">ES6 总结</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>NANNO</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            ES6 总结
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "面试">面试</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Es">Es</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count word-count">2.7k</span>Reading time: <span class="post-count reading-time">10 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/09/14</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="ES6面试"><a href="#ES6面试" class="headerlink" title="ES6面试"></a>ES6面试</h2><p>参考： <a target="_blank" rel="noopener" href="https://www.cnblogs.com/fengxiongZz/p/8191503.html">ES6高频面试题目整理</a></p>
+<p><a target="_blank" rel="noopener" href="http://es6.ruanyifeng.com/#docs/let">ECMAScript 6 入门-阮一峰</a></p>
+<h3 id="1-箭头函数和普通函数的区别是什么？"><a href="#1-箭头函数和普通函数的区别是什么？" class="headerlink" title="1.箭头函数和普通函数的区别是什么？"></a>1.箭头函数和普通函数的区别是什么？</h3><ul>
+<li>普通函数this：</li>
+</ul>
+<ol>
+<li>this总是代表它的直接调用者。</li>
+<li>在默认情况下，没找到直接调用者，this指的是window。</li>
+<li>在严格模式下，没有直接调用者的函数中的this是undefined。</li>
+<li>使用call,apply,bind绑定，this指的是绑定的对象。</li>
+</ol>
+<ul>
+<li>箭头函数this：</li>
+</ul>
+<ol>
+<li>在使用=&gt;定义函数的时候，this的指向是 <strong>定义时所在的对象</strong>，而不是使用时所在的对象；</li>
+<li><strong>不能够用作构造函数</strong>，这就是说，不能够使用new命令，否则就会抛出一个错误；</li>
+<li>不能够使用 <strong>arguments</strong> 对象；</li>
+<li>不能使用 <strong>yield</strong> 命令；</li>
+</ol>
+<h3 id="2-讲一下let、var、const的区别，谈谈如何冻结变量"><a href="#2-讲一下let、var、const的区别，谈谈如何冻结变量" class="headerlink" title="2.讲一下let、var、const的区别，谈谈如何冻结变量"></a>2.讲一下let、var、const的区别，谈谈如何冻结变量</h3><ul>
+<li><strong>var</strong> 没有块级作用域，支持变量提升。</li>
+<li><strong>let</strong> 有块级作用域，不支持变量提升。不允许重复声明，暂存性死区。不能通过window.变量名进行访问.</li>
+<li><strong>const</strong> 有块级作用域，不支持变量提升，不允许重复声明，暂存性死区。声明一个变量一旦声明就不能改变，改变报错。const保证的变量的 <strong>内存地址</strong> 不得改动。如果想要将对象冻结的话，使用Object.freeze()方法.<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//递归冻结所有的对象</span></span><br><span class="line"><span class="keyword">var</span> constantize=<span class="function">(<span class="params">obj</span>)=&gt;</span>&#123;</span><br><span class="line">  <span class="built_in">Object</span>.freeze(obj);</span><br><span class="line">  <span class="built_in">Object</span>.key(obj).forEach(<span class="function">(<span class="params">key,i</span>)=&gt;</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">typeof</span> obj[key]===<span class="string">&#x27;object&#x27;</span>)&#123;</span><br><span class="line">      constantize(obj[key]);</span><br><span class="line">    &#125;  </span><br><span class="line">  )&#125;</span><br></pre></td></tr></table></figure></li>
+<li>let、const、class命令声明的全局变量，不属于顶层对象的属性。<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="built_in">window</span>.a <span class="comment">// 1</span></span><br><span class="line"><span class="keyword">let</span> b = <span class="number">1</span>;</span><br><span class="line"><span class="built_in">window</span>.b <span class="comment">// undefined</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="3-讲讲set结构"><a href="#3-讲讲set结构" class="headerlink" title="3. 讲讲set结构"></a>3. 讲讲set结构</h3><ul>
+<li>es6方法,Set本身是一个 <strong>构造函数</strong>，它类似于数组，但是成员值都是唯一的。<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> set = <span class="keyword">new</span> <span class="built_in">Set</span>([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">4</span>])</span><br><span class="line"><span class="built_in">console</span>.log([...set] )<span class="comment">// [1,2,3,4]</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Array</span>.from(<span class="keyword">new</span> <span class="built_in">Set</span>([<span class="number">2</span>,<span class="number">3</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">6</span>]))); <span class="comment">//[2,3,5,6]</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="4-去除重复数组，去除字符串里面的重复字符"><a href="#4-去除重复数组，去除字符串里面的重复字符" class="headerlink" title="4.去除重复数组，去除字符串里面的重复字符"></a>4.去除重复数组，去除字符串里面的重复字符</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 去除数组的重复成员</span></span><br><span class="line">[...new <span class="built_in">Set</span>(array)]</span><br><span class="line"><span class="comment">//去除字符串里面的重复字符</span></span><br><span class="line">[...new <span class="built_in">Set</span>(<span class="string">&#x27;ababbc&#x27;</span>)].join(<span class="string">&#x27;&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-如何拦截变量属性访问"><a href="#5-如何拦截变量属性访问" class="headerlink" title="5.如何拦截变量属性访问"></a>5.如何拦截变量属性访问</h3><ul>
+<li>使用proxy。<strong>new Proxy()</strong> 表示生成一个 <strong>Proxy</strong> 实例，<strong>target</strong> 参数表示所要拦截的目标对象，<strong>handler</strong> 参数也是一个对象，用来定制拦截行为。<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> proxy = <span class="keyword">new</span> <span class="built_in">Proxy</span>(&#123;&#125;, &#123;</span><br><span class="line">  get: <span class="function"><span class="keyword">function</span>(<span class="params">target, property</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">35</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="keyword">let</span> obj = <span class="built_in">Object</span>.create(proxy);</span><br><span class="line">obj.time <span class="comment">// 35</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="6-忽略enumerable为false的属性的四个操作？"><a href="#6-忽略enumerable为false的属性的四个操作？" class="headerlink" title="6.忽略enumerable为false的属性的四个操作？"></a>6.忽略enumerable为false的属性的四个操作？</h3><p>对象的每个属性都有一个描述对象（Descriptor），用来控制该属性的行为。Object.getOwnPropertyDescriptor方法可以获取该属性的描述对象。描述对象的enumerable属性，称为“可枚举性”，如果该属性为false，就表示某些操作会忽略当前属性。</p>
+<ul>
+<li>for…in循环：只遍历对象自身的和继承的可枚举的属性。</li>
+<li>Object.keys()：返回对象自身的所有可枚举的属性的键名。</li>
+<li>JSON.stringify()：只串行化对象自身的可枚举的属性。</li>
+<li>Object.assign()： 忽略enumerable为false的属性，只拷贝对象自身的可枚举的属性。</li>
+</ul>
+<h3 id="7-属性的五种遍历方法？"><a href="#7-属性的五种遍历方法？" class="headerlink" title="7.属性的五种遍历方法？"></a>7.属性的五种遍历方法？</h3><ul>
+<li>for…in循环遍历对象自身的和继承的可枚举属性（不含 Symbol 属性）。</li>
+<li>Object.keys返回一个数组，包括对象自身的（不含继承的）所有可枚举属性（不含 Symbol 属性）的键名。</li>
+<li>Object.getOwnPropertyNames返回一个数组，包含对象自身的所有属性（不含 Symbol 属性，但是包括不可枚举属性）的键名。</li>
+<li>Object.getOwnPropertySymbols返回一个数组，包含对象自身的所有 Symbol 属性的键名。</li>
+<li>Reflect.ownKeys返回一个数组，包含对象自身的所有键名，不管键名是 Symbol 或字符串，也不管是否可枚举。</li>
+</ul>
+<h3 id="8-CommonJS模块与es6模块的差异？"><a href="#8-CommonJS模块与es6模块的差异？" class="headerlink" title="8.CommonJS模块与es6模块的差异？"></a>8.CommonJS模块与es6模块的差异？</h3><ul>
+<li>CommonJS 模块输出的是一个值的拷贝，ES6 模块输出的是值的引用。</li>
+<li>CommonJS 模块是运行时加载，ES6 模块是编译时输出接口。</li>
+<li>CommonJS 是同步导入，因为用于服务端，文件都在本地，同步导入即使卡住主线程影响也不大。而es6模块是异步导入，因为用于浏览器，需要下载文件，如果也采用同步导入会对渲染有很大影响</li>
+</ul>
+<h3 id="9-map、filter和reduce的区别"><a href="#9-map、filter和reduce的区别" class="headerlink" title="9.map、filter和reduce的区别"></a>9.map、filter和reduce的区别</h3><ul>
+<li>map 作用是生成一个新数组，遍历原数组，将每个元素拿出来做一些变换然后放入到新的数组中。map 的回调函数接受三个参数，分别是当前索引元素，索引，原数组</li>
+<li>filter 的作用也是生成一个新数组，在遍历数组的时候将返回值为 true 的元素放入新数组，我们可以利用这个函数删除一些不需要的元素</li>
+<li>reduce 可以将数组中的元素通过回调函数最终转换为一个值。对于 reduce 来说，它接受两个参数，分别是回调函数和初始值。回调函数接受四个参数，分别为累计值、当前元素、当前索引、原数组<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> sum = arr.reduce(<span class="function">(<span class="params">acc, current</span>) =&gt;</span> acc + current, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="10-async-及-await-的特点，它们的优点和缺点分别是什么？await-原理是什么？"><a href="#10-async-及-await-的特点，它们的优点和缺点分别是什么？await-原理是什么？" class="headerlink" title="10.async 及 await 的特点，它们的优点和缺点分别是什么？await 原理是什么？"></a>10.async 及 await 的特点，它们的优点和缺点分别是什么？await 原理是什么？</h3></li>
+<li>一个函数如果加上 async ，那么该函数就会返回一个 Promise。async 就是将函数返回值使用 Promise.resolve() 包裹了下，和 then 中处理返回值一样，并且 await 只能配套 async 使用。</li>
+<li>async 和 await 可以说是异步终极解决方案了，相比直接使用 Promise 来说，优势在于处理 then 的调用链，能够更清晰准确的写出代码，毕竟写一大堆 then 也很恶心，并且也能优雅地解决回调地狱问题。当然也存在一些缺点，因为 await 将异步代码改造成了同步代码，如果多个异步代码没有依赖性却使用了 await 会导致性能上的降低。</li>
+</ul>
+<h3 id="11-setTimeout、setInterval、requestAnimationFrame-各有什么特点？"><a href="#11-setTimeout、setInterval、requestAnimationFrame-各有什么特点？" class="headerlink" title="11.setTimeout、setInterval、requestAnimationFrame 各有什么特点？"></a>11.setTimeout、setInterval、requestAnimationFrame 各有什么特点？</h3><ul>
+<li>setTimeout(code, millseconds) 用于延时执行参数指定的代码，如果在指定的延迟时间之前，你想取消这个执行，那么直接用clearTimeout(timeoutId)来清除任务，timeoutID 是 setTimeout 时返回的；</li>
+<li>setInterval(code, millseconds)用于每隔一段时间执行指定的代码，永无停歇，除非你反悔了，想清除它，可以使用 clearInterval(intervalId)，这样从调用 clearInterval 开始，就不会在有重复执行的任务，intervalId 是 setInterval 时返回的；</li>
+<li>requestAnimationFrame(code)，一般用于动画，与 setTimeout 方法类似，区别是 setTimeout 是用户指定的，而 requestAnimationFrame 是浏览器刷新频率决定的，一般遵循 W3C 标准，它在浏览器每次刷新页面之前执行。</li>
+<li>setTimeout和setInterval的问题是，它们都不精确。它们的内在运行机制决定了时间间隔参数实际上只是指定了把动画代码添加到浏览器UI线程队列中以等待执行的时间。如果队列前面已经加入了其他任务，那动画代码就要等前面的任务完成后再执行。requestAnimationFrame采用系统时间间隔，保持最佳绘制效率，不会因为间隔时间过短，造成过度绘制，增加开销；也不会因为间隔时间太长，使用动画卡顿不流畅，让各种网页动画效果能够有一个统一的刷新机制，从而节省系统资源，提高系统性能，改善视觉效果。著作权归作者所有。</li>
+</ul>
+<h3 id="12-async函数对-Generator-函数的改进"><a href="#12-async函数对-Generator-函数的改进" class="headerlink" title="12. async函数对 Generator 函数的改进"></a>12. async函数对 Generator 函数的改进</h3><ol>
+<li>内置执行器<br>Generator 函数的执行必须靠执行器，所以才有了co模块，而async函数自带执行器。</li>
+<li>更好的语义<br>async和await，比起星号和yield，语义更清楚了。async表示函数里有异步操作，await表示紧跟在后面的表达式需要等待结果。</li>
+<li>更广的适用性<br>co模块约定，yield命令后面只能是 Thunk 函数或 Promise 对象，而async函数的await命令后面，可以是 Promise 对象和原始类型的值（数值、字符串和布尔值，但这时会自动转成立即 resolved 的 Promise 对象）。</li>
+<li>返回值是Promise<br>async函数的返回值是 Promise 对象，这比 Generator 函数的返回值是 Iterator 对象方便多了。你可以用then方法指定下一步的操作。</li>
+</ol>
+<h3 id="13-如何让await同时触发"><a href="#13-如何让await同时触发" class="headerlink" title="13. 如何让await同时触发"></a>13. 如何让await同时触发</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// getFoo完成以后，才会执行getBar</span></span><br><span class="line"><span class="keyword">let</span> foo = <span class="keyword">await</span> getFoo();</span><br><span class="line"><span class="keyword">let</span> bar = <span class="keyword">await</span> getBar();</span><br><span class="line"><span class="comment">// 方法一： promise.all</span></span><br><span class="line"><span class="keyword">let</span> [foo, bar] = <span class="keyword">await</span> <span class="built_in">Promise</span>.all([getFoo(), getBar()]);</span><br><span class="line"><span class="comment">// 方法二： </span></span><br><span class="line"><span class="keyword">let</span> fooPromise = getFoo();</span><br><span class="line"><span class="keyword">let</span> barPromise = getBar();</span><br><span class="line"><span class="keyword">let</span> foo = <span class="keyword">await</span> fooPromise;</span><br><span class="line"><span class="keyword">let</span> bar = <span class="keyword">await</span> barPromise;</span><br></pre></td></tr></table></figure>
+
+<h3 id="14-介绍下-Promise-all-使用、原理实现及错误处理"><a href="#14-介绍下-Promise-all-使用、原理实现及错误处理" class="headerlink" title="14. 介绍下 Promise.all 使用、原理实现及错误处理"></a>14. 介绍下 Promise.all 使用、原理实现及错误处理</h3><ul>
+<li>Promise.all()接受一个由promise任务组成的数组，可以同时处理多个promise任务，当所有的任务都执行完成时，Promise.all()返回resolve，但当有一个失败(reject)，则返回失败的信息，即使其他promise执行成功，也会返回失败。<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Promise</span>.all = <span class="function"><span class="keyword">function</span> (<span class="params">list</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!<span class="built_in">Array</span>.isArray(list))&#123;</span><br><span class="line">        <span class="keyword">return</span> reject(<span class="keyword">new</span> <span class="built_in">TypeError</span>(<span class="string">&quot;argument must be anarray&quot;</span>))</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> resValues = [];</span><br><span class="line">        <span class="keyword">let</span> counts = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">let</span> len = list.length;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i=<span class="number">0</span>; i&lt;len; i++) &#123;</span><br><span class="line">            <span class="built_in">Promise</span>.resolve(list[i]).then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">                counts++;</span><br><span class="line">                resValues[i] = res;</span><br><span class="line">                <span class="keyword">if</span> (counts === len) &#123;</span><br><span class="line">                    resolve(resValues)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;, <span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">                reject(err)</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="15-设计并实现promise-race"><a href="#15-设计并实现promise-race" class="headerlink" title="15. 设计并实现promise.race"></a>15. 设计并实现promise.race</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Promise</span>._race = <span class="function"><span class="params">promises</span> =&gt;</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">	promises.forEach(<span class="function"><span class="params">promise</span> =&gt;</span> &#123;</span><br><span class="line">		promise.then(resolve, reject)</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="16-设计并实现promise-finally"><a href="#16-设计并实现promise-finally" class="headerlink" title="16. 设计并实现promise.finally"></a>16. 设计并实现promise.finally</h3><ul>
+<li>finally() 方法返回一个Promise。在promise结束时，无论结果是fulfilled或者是rejected，都会执行指定的回调函数。这为在Promise是否成功完成后都需要执行的代码提供了一种方式。<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Promise</span>.prototype.finally = <span class="function"><span class="keyword">function</span> (<span class="params">callback</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> P = <span class="built_in">this</span>.constructor;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">this</span>.then(</span><br><span class="line">    value  =&gt; P.resolve(callback()).then(<span class="function">() =&gt;</span> value),</span><br><span class="line">    reason =&gt; P.resolve(callback()).then(<span class="function">() =&gt;</span> &#123; <span class="keyword">throw</span> reason &#125;)</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="17-WeakSet-与-Set-的区别"><a href="#17-WeakSet-与-Set-的区别" class="headerlink" title="17. WeakSet 与 Set 的区别"></a>17. WeakSet 与 Set 的区别</h3><ul>
+<li>WeakSet 只能储存对象引用，不能存放值，而 Set 对象都可以</li>
+<li>WeakSet 对象中储存的对象值都是被弱引用的，即垃圾回收机制不考虑 WeakSet 对该对象的应用，如果没有其他的变量或属性引用这个对象值，则这个对象将会被垃圾回收掉（不考虑该对象还存在于 WeakSet 中），所以，WeakSet 对象里有多少个成员元素，取决于垃圾回收机制有没有运行，运行前后成员个数可能不一致，遍历结束之后，有的成员可能取不到了（被垃圾回收了），WeakSet 对象是无法被遍历的（ES6 规定 WeakSet 不可遍历），也没有办法拿到它包含的所有元素</li>
+</ul>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>Author：<a href="https://nanno12.github.io">Nanno</a>
+            <p>原文链接：<a href="https://nanno12.github.io/2020/09/14/Esc/">https://nanno12.github.io/2020/09/14/Esc/</a>
+            <p>发表日期：<a href="https://nanno12.github.io/2020/09/14/Esc/">September 14th 2020, 11:33:00 am</a>
+            <p>更新日期：<a href="https://nanno12.github.io/2020/09/14/Esc/">September 14th 2020, 1:41:12 pm</a>
+            <p>版权声明：本文采用<a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2020/09/14/vue%E6%80%BB%E7%BB%93/" title= "vue 总结">
+                    <div class="nextTitle">vue 总结</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2020/09/14/webpack%E7%9B%B8%E5%85%B3%E9%9D%A2%E8%AF%95/" title= "webpack 相关面试">
+                    <div class="prevTitle">webpack 相关面试</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- gitalk评论 -->
+
+    <!-- utteranc评论 -->
+
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:nannow127@gmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="https://github.com/nanno12" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/example_qr.png" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ES6%E9%9D%A2%E8%AF%95"><span class="toc-number">1.</span> <span class="toc-text">ES6面试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0%E5%92%8C%E6%99%AE%E9%80%9A%E5%87%BD%E6%95%B0%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">1.箭头函数和普通函数的区别是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AE%B2%E4%B8%80%E4%B8%8Blet%E3%80%81var%E3%80%81const%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%8C%E8%B0%88%E8%B0%88%E5%A6%82%E4%BD%95%E5%86%BB%E7%BB%93%E5%8F%98%E9%87%8F"><span class="toc-number">1.2.</span> <span class="toc-text">2.讲一下let、var、const的区别，谈谈如何冻结变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%AE%B2%E8%AE%B2set%E7%BB%93%E6%9E%84"><span class="toc-number">1.3.</span> <span class="toc-text">3. 讲讲set结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%8E%BB%E9%99%A4%E9%87%8D%E5%A4%8D%E6%95%B0%E7%BB%84%EF%BC%8C%E5%8E%BB%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%87%8C%E9%9D%A2%E7%9A%84%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6"><span class="toc-number">1.4.</span> <span class="toc-text">4.去除重复数组，去除字符串里面的重复字符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%A6%82%E4%BD%95%E6%8B%A6%E6%88%AA%E5%8F%98%E9%87%8F%E5%B1%9E%E6%80%A7%E8%AE%BF%E9%97%AE"><span class="toc-number">1.5.</span> <span class="toc-text">5.如何拦截变量属性访问</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E5%BF%BD%E7%95%A5enumerable%E4%B8%BAfalse%E7%9A%84%E5%B1%9E%E6%80%A7%E7%9A%84%E5%9B%9B%E4%B8%AA%E6%93%8D%E4%BD%9C%EF%BC%9F"><span class="toc-number">1.6.</span> <span class="toc-text">6.忽略enumerable为false的属性的四个操作？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E5%B1%9E%E6%80%A7%E7%9A%84%E4%BA%94%E7%A7%8D%E9%81%8D%E5%8E%86%E6%96%B9%E6%B3%95%EF%BC%9F"><span class="toc-number">1.7.</span> <span class="toc-text">7.属性的五种遍历方法？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-CommonJS%E6%A8%A1%E5%9D%97%E4%B8%8Ees6%E6%A8%A1%E5%9D%97%E7%9A%84%E5%B7%AE%E5%BC%82%EF%BC%9F"><span class="toc-number">1.8.</span> <span class="toc-text">8.CommonJS模块与es6模块的差异？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-map%E3%80%81filter%E5%92%8Creduce%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.9.</span> <span class="toc-text">9.map、filter和reduce的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-async-%E5%8F%8A-await-%E7%9A%84%E7%89%B9%E7%82%B9%EF%BC%8C%E5%AE%83%E4%BB%AC%E7%9A%84%E4%BC%98%E7%82%B9%E5%92%8C%E7%BC%BA%E7%82%B9%E5%88%86%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9Fawait-%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.10.</span> <span class="toc-text">10.async 及 await 的特点，它们的优点和缺点分别是什么？await 原理是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-setTimeout%E3%80%81setInterval%E3%80%81requestAnimationFrame-%E5%90%84%E6%9C%89%E4%BB%80%E4%B9%88%E7%89%B9%E7%82%B9%EF%BC%9F"><span class="toc-number">1.11.</span> <span class="toc-text">11.setTimeout、setInterval、requestAnimationFrame 各有什么特点？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-async%E5%87%BD%E6%95%B0%E5%AF%B9-Generator-%E5%87%BD%E6%95%B0%E7%9A%84%E6%94%B9%E8%BF%9B"><span class="toc-number">1.12.</span> <span class="toc-text">12. async函数对 Generator 函数的改进</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-%E5%A6%82%E4%BD%95%E8%AE%A9await%E5%90%8C%E6%97%B6%E8%A7%A6%E5%8F%91"><span class="toc-number">1.13.</span> <span class="toc-text">13. 如何让await同时触发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-%E4%BB%8B%E7%BB%8D%E4%B8%8B-Promise-all-%E4%BD%BF%E7%94%A8%E3%80%81%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0%E5%8F%8A%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="toc-number">1.14.</span> <span class="toc-text">14. 介绍下 Promise.all 使用、原理实现及错误处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15-%E8%AE%BE%E8%AE%A1%E5%B9%B6%E5%AE%9E%E7%8E%B0promise-race"><span class="toc-number">1.15.</span> <span class="toc-text">15. 设计并实现promise.race</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16-%E8%AE%BE%E8%AE%A1%E5%B9%B6%E5%AE%9E%E7%8E%B0promise-finally"><span class="toc-number">1.16.</span> <span class="toc-text">16. 设计并实现promise.finally</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#17-WeakSet-%E4%B8%8E-Set-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.17.</span> <span class="toc-text">17. WeakSet 与 Set 的区别</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 35
+        </div>
+        <!-- search  -->
+        
+            <div class="site-search popup-trigger">
+                <span class="iconfont-archer search-icon">&#xe627;</span>
+            </div>
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/14</span><a class="archive-post-title" href= "/2020/09/14/vue%E6%80%BB%E7%BB%93/" >vue 总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/14</span><a class="archive-post-title" href= "/2020/09/14/Esc/" >ES6 总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/14</span><a class="archive-post-title" href= "/2020/09/14/webpack%E7%9B%B8%E5%85%B3%E9%9D%A2%E8%AF%95/" >webpack 相关面试</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/14</span><a class="archive-post-title" href= "/2020/09/14/%E5%89%8D%E7%AB%AF%E5%B8%B8%E8%A7%81%E4%BB%A3%E7%A0%81%E9%9D%A2%E8%AF%95%E9%A2%98/" >前端常见代码面试题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/14</span><a class="archive-post-title" href= "/2020/09/14/%E6%80%A7%E8%83%BD%E5%AE%89%E5%85%A8%E7%BD%91%E7%BB%9C%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/" >性能安全网络浏览器相关知识</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href= "/2020/09/10/http%20%E9%9D%A2%E8%AF%95/" >http 面试</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href= "/2020/09/10/2020-09-10-AJAX/" >AJAX</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href= "/2020/09/10/2020-09-10-%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5/" >同步异步</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href= "/2020/09/10/2020-09-10-%E6%B7%B1%E6%B5%85%E6%8B%B7%E8%B4%9D/" >深浅拷贝</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href= "/2020/09/10/dom%E9%80%9A%E7%94%A8%E7%9A%84%E4%BA%8B%E4%BB%B6%E7%BB%91%E5%AE%9A%E5%87%BD%E6%95%B0/" >dom 事件绑定函数以及 dom 操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href= "/2020/09/10/2020-09-10-%E7%8E%AF%E5%A2%83/" >环境</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href= "/2020/09/02/2020-03-23-js%E9%9D%A2%E8%AF%95%E9%A2%98/" >js面试题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href= "/2020/09/02/2020-06-08-Vuex/" >Vuex</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href= "/2020/09/02/2020-06-08-vue-router/" >Vue-router</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href= "/2020/09/02/2020-06-08-vue%E6%80%BB%E7%BB%93%E9%9D%A2%E8%AF%95/" >vue总结面试</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href= "/2020/09/02/2020-06-08-%E9%9D%A2%E8%AF%95%E9%A2%98%E7%BB%BC%E5%90%88(%E4%BA%8C)/" >web前端面试题(二)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href= "/2020/09/02/2020-08-24-html,css%E6%A0%B7%E5%BC%8F%E9%9D%A2%E8%AF%95/" >html,css面试</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2019-06-03-VSCode%E9%BB%98%E8%AE%A4%E5%8A%9F%E8%83%BD%E4%BB%A5%E5%8F%8A%E6%8F%92%E4%BB%B6/" >vscode代码片段</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-03-23-element-tag%E6%A0%87%E7%AD%BE%E5%8F%AF%E4%BF%AE%E6%94%B9/" >element标签取值</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-03-23-%E5%B8%B8%E8%A7%81%E7%9A%84http%E7%8A%B6%E6%80%81%E7%A0%81/" >常见的HTTP状态码</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-04-02-js%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E6%9C%89%E6%9F%90%E5%85%83%E7%B4%A0/" >js判断数组某元素是否存在</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-04-02-vue%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8C%87%E4%BB%A4/" >vue自定义指令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-04-02-%E9%94%AE%E7%9B%98%E4%BA%8B%E4%BB%B6/" >键盘事件</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-05-08-webpack%E6%89%93%E5%8C%85/" >webpack面试题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-06-03-flex%E5%B8%83%E5%B1%80/" >flex布局</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-06-03-git%E5%91%BD%E4%BB%A4/" >Git</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-06-04-CSS%E4%B8%8D%E5%AE%9A%E9%AB%98%E5%9E%82%E7%9B%B4%E5%B1%85%E4%B8%AD/" >CSS垂直水平居中</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-06-05-ele+vue%20%E8%A1%A8%E6%A0%BC%E5%A4%9A%E9%80%89%E5%9B%9E%E6%98%BE/" >ele+vue 表格多选回显</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-06-05-elementUI%E6%A1%86%E6%9E%B6%E9%97%AE%E9%A2%98%E9%9B%86%E5%90%88/" >elementUI框架问题集合</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2020/08/19/2020-01-22-js%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B/" >第五章 引用类型</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/09</span><a class="archive-post-title" href= "/2020/07/09/2020-07-09-js%E6%9C%89%E5%85%B3js%E5%8E%9F%E5%9E%8B%E3%80%81%E5%8E%9F%E5%9E%8B%E9%93%BE%E3%80%81%E4%BD%9C%E7%94%A8%E5%9F%9F%E9%93%BE%E8%AF%95%E9%A2%98/" >有关js原型、原型链、作用域链试题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/10</span><a class="archive-post-title" href= "/2020/06/10/2020-06-10-react%E8%AF%AD%E6%B3%95/" >React</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/04</span><a class="archive-post-title" href= "/2020/06/04/2019-11-14-vue%E5%BD%93%E5%89%8D%E6%97%B6%E9%97%B4%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B9%B4%E6%9C%88%E6%97%A5/" >vue当前时间转换成年月日</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/04</span><a class="archive-post-title" href= "/2020/06/04/2020-05-17-js%E6%95%B0%E7%BB%84%E6%B1%82%E5%92%8C%E6%96%B9%E6%B3%95/" >js数组求和方法</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/08</span><a class="archive-post-title" href= "/2019/08/08/2020-09-01-%E9%9D%A2%E8%AF%95%E9%A2%98%E9%93%BE%E6%8E%A5/" >面试博客链接</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="使用"><span class="iconfont-archer">&#xe606;</span>使用</span>
+    
+        <span class="sidebar-tag-name" data-tags="vscode"><span class="iconfont-archer">&#xe606;</span>vscode</span>
+    
+        <span class="sidebar-tag-name" data-tags="JavaScript"><span class="iconfont-archer">&#xe606;</span>JavaScript</span>
+    
+        <span class="sidebar-tag-name" data-tags="Element"><span class="iconfont-archer">&#xe606;</span>Element</span>
+    
+        <span class="sidebar-tag-name" data-tags="面试"><span class="iconfont-archer">&#xe606;</span>面试</span>
+    
+        <span class="sidebar-tag-name" data-tags="Http"><span class="iconfont-archer">&#xe606;</span>Http</span>
+    
+        <span class="sidebar-tag-name" data-tags="Vue"><span class="iconfont-archer">&#xe606;</span>Vue</span>
+    
+        <span class="sidebar-tag-name" data-tags="Css"><span class="iconfont-archer">&#xe606;</span>Css</span>
+    
+        <span class="sidebar-tag-name" data-tags="Git"><span class="iconfont-archer">&#xe606;</span>Git</span>
+    
+        <span class="sidebar-tag-name" data-tags="框架"><span class="iconfont-archer">&#xe606;</span>框架</span>
+    
+        <span class="sidebar-tag-name" data-tags="封装"><span class="iconfont-archer">&#xe606;</span>封装</span>
+    
+        <span class="sidebar-tag-name" data-tags="Ajax"><span class="iconfont-archer">&#xe606;</span>Ajax</span>
+    
+        <span class="sidebar-tag-name" data-tags="Es"><span class="iconfont-archer">&#xe606;</span>Es</span>
+    
+        <span class="sidebar-tag-name" data-tags="前端常见代码面试题"><span class="iconfont-archer">&#xe606;</span>前端常见代码面试题</span>
+    
+        <span class="sidebar-tag-name" data-tags="html"><span class="iconfont-archer">&#xe606;</span>html</span>
+    
+        <span class="sidebar-tag-name" data-tags="css"><span class="iconfont-archer">&#xe606;</span>css</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="其他"><span class="iconfont-archer">&#xe60a;</span>其他</span>
+    
+        <span class="sidebar-category-name" data-categories="js方法"><span class="iconfont-archer">&#xe60a;</span>js方法</span>
+    
+        <span class="sidebar-category-name" data-categories="js"><span class="iconfont-archer">&#xe60a;</span>js</span>
+    
+        <span class="sidebar-category-name" data-categories="css"><span class="iconfont-archer">&#xe60a;</span>css</span>
+    
+        <span class="sidebar-category-name" data-categories="vue"><span class="iconfont-archer">&#xe60a;</span>vue</span>
+    
+        <span class="sidebar-category-name" data-categories="配置"><span class="iconfont-archer">&#xe60a;</span>配置</span>
+    
+        <span class="sidebar-category-name" data-categories="Element问题"><span class="iconfont-archer">&#xe60a;</span>Element问题</span>
+    
+        <span class="sidebar-category-name" data-categories="react"><span class="iconfont-archer">&#xe60a;</span>react</span>
+    
+        <span class="sidebar-category-name" data-categories="面试慕课讲解"><span class="iconfont-archer">&#xe60a;</span>面试慕课讲解</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Nanno"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+        <div class="site-search">
+  <div class="algolia-popup popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="iconfont-archer">&#xe609;</i>
+    </span>
+  </div>
+</div>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.8.0/dist/instantsearch.min.js" defer></script>
+        <script src="/scripts/search.js" defer></script>
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
